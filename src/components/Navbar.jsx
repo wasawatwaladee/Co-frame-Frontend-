@@ -11,24 +11,22 @@ const Navbar = () => {
             href="/"
             className="text-2xl font-bold text-primary tracking-wider hover:opacity-90 transition-opacity"
           >
-            STREAMFLIX
+            CineVerse
           </a>
 
           <div className="hidden md:flex gap-6 text-sm font-medium text-textSecondary">
-            <a
-              href="#"
-              className="text-textPrimary hover:text-primary transition-colors"
-            >
-              Home
-            </a>
-            <a href="#" className="hover:text-textPrimary transition-colors">
-              Community
-            </a>
+            
+
+            <NavLink to={'/'}>Home</NavLink>
+            <NavLink to={'/community'}>Community</NavLink>
+            
           </div>
         </div>
 
         {/* Right Side: Search & Login */}
         <div className="flex items-center gap-6">
+
+          {/* Search */}
           <button className="text-textSecondary hover:text-textPrimary transition-colors">
             {/* Search Icon */}
             <svg
@@ -47,11 +45,8 @@ const Navbar = () => {
             </svg>
           </button>
 
-          <a
-            href="#"
-            className="flex items-center gap-2 text-sm font-medium text-textSecondary hover:text-textPrimary transition-colors group"
-          >
-            {/* Login Icon */}
+        
+            {/* User Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -68,8 +63,10 @@ const Navbar = () => {
             </svg>
             
 
+            {/* Login */}
+
             <NavLink to={'/login'}>Login</NavLink>
-          </a>
+         
         </div>
       </div>
     </nav>
