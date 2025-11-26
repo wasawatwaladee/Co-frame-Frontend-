@@ -4,8 +4,10 @@ import {
   Outlet,
   RouterProvider,
 } from "react-router";
-import LoginPage from "../pages/loginPage";
+
 import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import RoomPage from "../pages/RoomPage";
 import WatchPartyPage from "../pages/WatchPartyPage";
 
 const guestRouter = createBrowserRouter([
@@ -14,9 +16,12 @@ const guestRouter = createBrowserRouter([
 ]);
 
 const userRouter = createBrowserRouter([
-  { path: "/", element: <LoginPage /> },
+  { path: "/", element: <HomePage /> },
   { path: "*", element: <Navigate to="/" /> },
-  { path: "home", element: <HomePage /> },
+  { path: "login", element: <LoginPage /> },
+
+  { path: "/room/:movieId/:roomToken?", element: <RoomPage /> },
+
   { path: "watchparty", element: <WatchPartyPage /> },
 ]);
 
