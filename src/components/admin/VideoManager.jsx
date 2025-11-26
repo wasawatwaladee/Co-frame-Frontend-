@@ -1,5 +1,7 @@
-import { useState } from "react";
-import VideoModal from "../admin/modal/VideoModal"; // Import Modal ที่สร้างใหม่
+import React, { useState } from "react";
+import VideoModal from "../admin/modal/VideoModal";
+import EditVideoModal from "../admin/modal/EditVideoModal";
+import DeleteVideoModal from "../admin/modal/DeleteVideoModal";
 
 // Mock Data (เหมือนเดิม)
 const mockVideos = [
@@ -46,8 +48,32 @@ const mockVideos = [
 ];
 
 export default function VideoManager() {
-  // 1. เพิ่ม State ควบคุมการเปิด/ปิด Modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // --- State Management ---
+  // ใช้ modalType เพื่อระบุว่าจะเปิด Modal ไหน ('add', 'edit', 'delete' หรือ null เพื่อปิด)
+  const [modalType, setModalType] = useState(null);
+  // ใช้ selectedVideo เพื่อส่งข้อมูลหนังที่เลือกไปยัง Modal (Edit/Delete)
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
+  // --- Handlers ---
+  const handleOpenAdd = () => {
+    setSelectedVideo(null);
+    setModalType("add");
+  };
+
+  const handleOpenEdit = (video) => {
+    setSelectedVideo(video);
+    setModalType("edit");
+  };
+
+  const handleOpenDelete = (video) => {
+    setSelectedVideo(video);
+    setModalType("delete");
+  };
+
+  const handleClose = () => {
+    setModalType(null);
+    setSelectedVideo(null);
+  };
 
   return (
     <div>
@@ -79,9 +105,9 @@ export default function VideoManager() {
             </svg>
           </div>
 
-          {/* Add Button -> 2. ผูก Event onClick ให้เปิด Modal */}
+          {/* ปุ่มเพิ่มวิดีโอ -> เปิด Modal Add */}
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleOpenAdd}
             className="bg-primary hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-colors shrink-0 shadow-lg shadow-red-900/20"
           >
             <svg
@@ -110,7 +136,7 @@ export default function VideoManager() {
             key={video.id}
             className="bg-[#1a1a1a] p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center group hover:bg-[#252525] transition-colors border border-transparent hover:border-white/5"
           >
-            {/* ... (ส่วนแสดงรายการวิดีโอ เหมือนเดิม) ... */}
+            {/* Thumbnail */}
             <div className="w-full md:w-48 h-28 shrink-0 relative rounded-lg overflow-hidden bg-black">
               <img
                 src={video.thumbnail}
@@ -118,6 +144,8 @@ export default function VideoManager() {
                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
               />
             </div>
+
+            {/* Info */}
             <div className="flex-1 w-full text-center md:text-left">
               <h3 className="text-lg font-bold text-white mb-1">
                 {video.title}
@@ -133,8 +161,15 @@ export default function VideoManager() {
                 <span>{video.date}</span>
               </div>
             </div>
+
+            {/* Action Buttons */}
             <div className="flex items-center gap-3">
-              <button className="p-2 text-textSecondary hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+              {/* ปุ่มแก้ไข -> เปิด Modal Edit */}
+              <button
+                onClick={() => handleOpenEdit(video)}
+                className="p-2 text-textSecondary hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                title="แก้ไข"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -150,7 +185,13 @@ export default function VideoManager() {
                   />
                 </svg>
               </button>
-              <button className="p-2 text-textSecondary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
+
+              {/* ปุ่มลบ -> เปิด Modal Delete */}
+              <button
+                onClick={() => handleOpenDelete(video)}
+                className="p-2 text-textSecondary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                title="ลบ"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -171,8 +212,24 @@ export default function VideoManager() {
         ))}
       </div>
 
-      {/* 3. เรียกใช้ Modal Component */}
-      <VideoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* --- RENDER MODALS --- */}
+
+      {/* 1. Modal เพิ่มวิดีโอ (VideoModal) */}
+      <VideoModal isOpen={modalType === "add"} onClose={handleClose} />
+
+      {/* 2. Modal แก้ไขวิดีโอ (EditVideoModal) */}
+      <EditVideoModal
+        isOpen={modalType === "edit"}
+        onClose={handleClose}
+        videoData={selectedVideo} // ส่งข้อมูลหนังไปให้ Form
+      />
+
+      {/* 3. Modal ลบวิดีโอ (DeleteVideoModal) */}
+      <DeleteVideoModal
+        isOpen={modalType === "delete"}
+        onClose={handleClose}
+        videoData={selectedVideo} // ส่งข้อมูลหนังไปเพื่อแสดงชื่อหนังที่จะลบ
+      />
     </div>
   );
 }
