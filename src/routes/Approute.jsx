@@ -6,6 +6,7 @@ import {
 } from "react-router";
 import LoginPage from "../pages/loginPage";
 import HomePage from "../pages/HomePage";
+import WatchPartyPage from "../pages/WatchPartyPage";
 
 const guestRouter = createBrowserRouter([
   { path: "/", element: <LoginPage /> },
@@ -16,6 +17,7 @@ const userRouter = createBrowserRouter([
   { path: "/", element: <LoginPage /> },
   { path: "*", element: <Navigate to="/" /> },
   { path: "home", element: <HomePage /> },
+  { path: "watchparty", element: <WatchPartyPage /> },
 ]);
 
 function AppRouter() {
