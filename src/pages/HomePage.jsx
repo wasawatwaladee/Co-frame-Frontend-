@@ -1,26 +1,20 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import MovieGrid from "../components/MovieGrid";
 import MainLayout from "../layouts/Layout";
+import { fetchMovies } from "../api/api";
 
-const mockMovies = Array.from({ length: 12 }).map((_, index) => ({
-  id: index,
-  title: index % 2 === 0 ? "Godzilla vs Kong" : "Civil War",
-  poster:
-    index % 2 === 0
-      ? "https://image.tmdb.org/t/p/w500/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg"
-      : "https://image.tmdb.org/t/p/w500/sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg",
-  rating: index % 2 === 0 ? "7.8" : "8.2",
-}));
+export default function HomePage() {
+  const [movies, setMovies] = useState([]);
 
-function HomePage() {
+    useEffect(() => {
+    fetchMovies().then(setMovies).catch(console.error);
+  }, []);
+
+console.log('movies', movies)
   return (
-    // เรียกใช้ Layout ครอบเนื้อหาทั้งหมด
     <MainLayout>
-      {/* ใส่เนื้อหาเฉพาะของหน้านี้ลงไป (children) */}
-      <MovieGrid title="Now Showing" movies={mockMovies} />
+      <MovieGrid title="Now Showing" movies={movies} />
     </MainLayout>
   );
 }
 
-export default HomePage;

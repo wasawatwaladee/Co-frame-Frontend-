@@ -7,6 +7,7 @@ import {
 
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
+import RoomPage from "../pages/RoomPage";
 import CommunityPage from "../pages/communityPage";
 
 const guestRouter = createBrowserRouter([
@@ -18,6 +19,9 @@ const userRouter = createBrowserRouter([
   { path: "/", element: <HomePage /> },
   { path: "*", element: <Navigate to="/" /> },
   { path: "login", element: <LoginPage /> },
+  
+  { path: "/room/:movieId/:roomToken?", element: <RoomPage /> },
+
   { path: "community", element: <CommunityPage /> },
 ]);
 
