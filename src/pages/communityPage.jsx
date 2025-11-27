@@ -14,7 +14,7 @@ function communityPage() {
 
   return (
     <>
-      <MainLayout />
+      <MainLayout>
 
       <SidebarSteam
         onCategorySelect={handleCategoryClick}
@@ -24,6 +24,7 @@ function communityPage() {
       <SidebarTrending
         selectedCategory={selectedCategory}
       />
+      </MainLayout>
     </>
   )
 }
