@@ -1,5 +1,3 @@
-import React, { useState } from 'react'
-import PostForm from './PostForm'
 
 function CreatePost({ onOpenForm }) {
   return (
