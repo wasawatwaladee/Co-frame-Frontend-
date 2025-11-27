@@ -139,7 +139,7 @@ const Navbar = () => {
                 onChange={(e) => setSearchValue(e.target.value)}
                 onBlur={handleSearchBlur}
                 autoFocus
-                className={`w-0 px-4 py-2 text-sm rounded-lg transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-white origin-right animate-[stretch_0.5s_ease-out_forwards] ${
+                className={`w-0 px-4 py-2 text-xs rounded-lg transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-white origin-right animate-[stretch_0.5s_ease-out_forwards] ${
                   isDarkMode
                     ? "bg-gray-500 text-white placeholder:text-gray-400 border border-gray-700"
                     : "bg-gray-200 text-black placeholder:text-gray-500 border border-gray-300"
