@@ -14,7 +14,7 @@ function communityPage() {
 
   return (
     <>
-      {/* <MainLayout /> */}
+      <MainLayout />
 
       <SidebarSteam
         onCategorySelect={handleCategoryClick}
