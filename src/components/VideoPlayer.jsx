@@ -39,11 +39,11 @@ export default function VideoPlayer({ roomId, movie }) {
     socket.emit("join_room", { roomId, movieId: movie.id });
 
     // receive initial room state
-    socket.on("room_state", (state) => {
-      setStatus({ playing: state.playing, time: state.time });
-      syncToState(state);
-      setInfo("Synced");
-    });
+    // socket.on("room_state", (state) => {
+    //   setStatus({ playing: state.playing, time: state.time });
+    //   syncToState(state);
+    //   // setInfo("Synced");
+    // });
 
     // receive remote action
     socket.on("player_action", ({ action, currentTime }) => {
