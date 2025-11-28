@@ -1,4 +1,4 @@
 import { io } from "socket.io-client";
+import { siteConfig } from "./constant/config";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "https://gui-bus-cartridges-incredible.trycloudflare.com";
-export const socket = io(SERVER_URL);
+export const socket = io(siteConfig.SERVER_URL);
