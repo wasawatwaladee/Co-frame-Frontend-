@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import useUserStore from "../stores/Store";
 
 const Navbar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const isDarkMode = useUserStore(state => state.isDarkMode);
+  const toggleTheme = useUserStore(state => state.toggleTheme);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const handleSearchClick = () => {
     setShowSearch(true);
@@ -65,7 +63,7 @@ const Navbar = () => {
                   isActive
                     ? "text-[#d50000] font-bold"
                     : isDarkMode
-                    ? "text-gray-300 hover:text-white"
+                    ? "text-gray-100 hover:text-white"
                     : "text-gray-700 hover:text-black"
                 }`
               }
