@@ -32,7 +32,7 @@ export default function RegisterPage() {
       console.log('test onSubmit', data)
       // Handle registration logic here
       toast.success('Account created successfully!')
-      navigate('/signin')
+      navigate('/login')
     } catch (error) {
       const errMsg = error.response?.data.error || error.message
       toast.error(errMsg)
