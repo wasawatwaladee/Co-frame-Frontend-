@@ -280,7 +280,7 @@ export default function RegisterPage() {
               <p className={`text-center text-sm ${isDarkMode ? 'text-text-secondary' : 'text-gray-600'} pt-4`}>
                 Already have an account?{" "}
                 <Link
-                  to="/signin"
+                  to="/login"
                   className="text-primary hover:text-accent-secondary transition-colors font-medium"
                 >
                   Sign In
