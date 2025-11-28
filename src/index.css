@@ -21,9 +21,3 @@ body{
 .animate-fade-in {
   animation: fade-in 0.8s ease-in-out;
 }
-/* Optional: ตั้งค่าพื้นฐาน body ให้เป็นสีดำไปเลยกันพลาด */
-body {
-  background-color: #000000;
-  color: #ffffff;
-}
-
