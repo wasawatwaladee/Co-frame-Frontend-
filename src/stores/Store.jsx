@@ -1,23 +1,25 @@
 import { create } from "zustand";
 import { createJSONStorage, persist} from "zustand/middleware"
+import { authApi } from "../api/api";
 
-const useUserStore = create ( persist ((set,get)=> ({
+const useUserStore = create (persist((set,get)=> ({
     user : null,
-    accessToken: '',
-    isLoggedIn: false,
-    
-    login: (userData ,tokenValue,) => set({ 
-      user: userData, 
-      accessToken: tokenValue,
-      isLoggedIn: true 
-  }),
+    token: '',
+    login: async(input) => {
+      const resp = await authApi.post('/api/auth/login',input)
+      console.log('resp', resp)
+       set({token:resp.data.token,
+            user:resp.data.user.email
+        })
+        return resp
+    },
     logout : ()=> set({
-      accessToken: '', 
+      token: '', 
       user: null,
       isLoggedIn: false,
      })
 }), {
-    name: 'useState',
+    name: 'useUserStore',
     storage : createJSONStorage(() => localStorage )
 }))
 

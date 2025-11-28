@@ -4,7 +4,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const mobileRegex = /^[0-9]{10,15}$/
 
 export const registerSchema = z.object({
-	identity: z.string().min(2, "Email or phone-number require")
+	email: z.string().min(2, "Email or phone-number require")
 		.refine(value => emailRegex.test(value) || mobileRegex.test(value), {
 			message: 'identity must be email or phone number'
 		}),
@@ -18,7 +18,7 @@ export const registerSchema = z.object({
 })
 
 export const loginSchema = z.object({
-	identity: z.string().min(2, "Email or phone-number require")
+	email: z.string().min(2, "Email or phone-number require")
 		.refine(value => emailRegex.test(value) || mobileRegex.test(value), {
 			message: 'identity must be email or phone number'
 		}),
