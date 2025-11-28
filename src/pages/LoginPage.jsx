@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import useUserStore from '../stores/Store';
 import { toast } from 'react-toastify';
 import { useForm } from "react-hook-form";
 import { loginSchema } from "../validations/schema";
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios'
 import { Link } from 'react-router';
+import { useNavigate } from "react-router";
+import useUserStore from "../stores/Store";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const login = useUserStore(state => state.login);
+  const login = useUserStore(state=> state.login);
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -20,16 +21,20 @@ export default function LoginPage() {
     mode: 'onSubmit'
   });
 
+  const navigate = useNavigate();
   const { isSubmitting, errors } = formState;
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
+ 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      login(data)
+      console.log('test onSubmit')
+      await login(data)
+      navigate('/')
+      
     } catch (error) {
       const errMsg = error.response?.data.error || error.message
       toast.error(errMsg)
