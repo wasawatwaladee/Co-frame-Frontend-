@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {  useNavigate, useParams } from "react-router-dom";
 import VideoPlayer from "../components/VideoPlayer";
 import Chat from "../components/Chat";
+import { siteConfig } from "../constant/config";
 
 export default function RoomPage() {
   const { movieId, roomToken } = useParams();
@@ -11,7 +12,7 @@ export default function RoomPage() {
 
   useEffect(() => {
     if (!movieId) return;
-    const url = (import.meta.env.VITE_SERVER_URL || "http://localhost:5500") + `/movies/${movieId}`;
+    const url = (import.meta.env.VITE_SERVER_URL || siteConfig.SERVER_URL) + `/movies/${movieId}`;
     console.log("url",url)
     fetch(url)
       .then((r) => r.json())
