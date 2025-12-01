@@ -1,18 +1,37 @@
 import React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
 
-  const openRoom = () => {
-  const token = Math.random().toString(36).slice(2, 9);
-  navigate(`/room/${movie.id}/${token}`);
-};
+//   const openRoom = () => {
+//   const token = Math.random().toString(36).slice(2, 9);
+//   navigate(`/room/${movie.id}/${token}`);
+// };
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [code, setCode] = useState("")
+
+  const openSingle = ()=>{
+    navigate(`/room/${movie.id}`)
+  }
+
+  const openParty = () => {
+    const token = Math.random().toString(36).slice(2,9).toUpperCase()
+    setCode(token)
+  }
+
+  const startParty = () => {
+    navigate(`/room/${movie.id}/${code}`)
+  }
 
 
   return (
+    <div>
     <div className="group relative cursor-pointer">
-       <button onClick={()=>openRoom()}>
+       {/* <button onClick={()=>openRoom()}> */}
+       <button onClick={()=>setIsModalOpen(true)}>
 
       <div className="aspect-2/3 w-full overflow-hidden rounded-lg bg-cardBg shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:shadow-xl">
         {/* Poster Image */}
@@ -40,6 +59,58 @@ const MovieCard = ({ movie }) => {
         </div>
       </div>
        </button>
+    </div>
+    {/* Modal */}
+    {isModalOpen && (
+        <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl w-80 text-black shadow-xl">
+
+            {!code && (
+              <>
+                <h2 className="text-lg font-bold mb-4 text-center">
+                  Choose Watching Mode
+                </h2>
+
+                <button
+                  onClick={openSingle}
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg mb-3 font-semibold"
+                >
+                  Single Private
+                </button>
+
+                <button
+                  onClick={openParty}
+                  className="w-full bg-purple-600 text-white py-2 rounded-lg font-semibold"
+                >
+                  Watch Party
+                </button>
+              </>
+            )}
+            {code && (
+              <div className="text-center">
+                <h3 className="font-semibold">Your Party Code</h3>
+                <p className="text-2xl font-bold my-3">{code}</p>
+
+                <button
+                  onClick={startParty}
+                  className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold"
+                >
+                  Start Party
+                </button>
+              </div>
+            )}
+             <button
+              className="mt-4 w-full text-center text-gray-600 text-sm"
+              onClick={() => {
+                setCode("");
+                setIsModalOpen(false);
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
