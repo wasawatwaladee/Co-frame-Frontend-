@@ -216,7 +216,7 @@ export default function LoginPage() {
                     />
                     <span className={`text-xs ${isDarkMode ? 'text-text-secondary' : 'text-gray-600'}`}>Remember me</span>
                   </label>
-                  <button type="button" className="text-xs text-primary hover:text-accent-secondary transition-colors">
+                  <button type="button" className={`text-xs ${isDarkMode ? 'text-text-secondary' : 'text-gray-600'} hover:text-primary transition-colors`}>
                     Forgot Password?
                   </button>
                 </div>

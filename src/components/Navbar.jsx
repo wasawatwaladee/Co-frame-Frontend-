@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import useUserStore from "../stores/Store";
 
 const Navbar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const isDarkMode = useUserStore(state => state.isDarkMode);
+  const toggleTheme = useUserStore(state => state.toggleTheme);
+  const user = useUserStore(state => state.user);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const handleSearchClick = () => {
     setShowSearch(true);
@@ -65,7 +64,7 @@ const Navbar = () => {
                   isActive
                     ? "text-[#d50000] font-bold"
                     : isDarkMode
-                    ? "text-gray-300 hover:text-white"
+                    ? "text-gray-100 hover:text-white"
                     : "text-gray-700 hover:text-black"
                 }`
               }
@@ -175,7 +174,8 @@ const Navbar = () => {
           </div>
 
           {/* User Profile */}
-          <button
+          <NavLink
+            to="/profile"
             className={`p-2 rounded-full transition-colors cursor-pointer ${
               isDarkMode
                 ? "text-gray-300 hover:text-gray-100"
@@ -197,19 +197,28 @@ const Navbar = () => {
                 d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
               />
             </svg>
-          </button>
-
-          {/* Login Button */}
-          <NavLink
-            to={"/login"}
-            className={`px-4 py-2 text-xs font-semibold rounded transition-all duration-300 hover:scale-105 active:scale-95 ${
-              isDarkMode
-                ? "text-white"
-                : "text-black"
-            }`}
-          >
-            Login
           </NavLink>
+
+          {/* Login / Username Kay 30/11 */}
+          {user ? (
+            <NavLink
+              to={"/profile"}
+              className={`px-4 py-2 text-xs font-semibold rounded transition-all duration-300 hover:scale-105 active:scale-95 ${
+                isDarkMode ? "text-white" : "text-black"
+              }`}
+            >
+              {typeof user === 'string' ? user : user.name || user.email || 'Profile'}
+            </NavLink>
+          ) : (
+            <NavLink
+              to={"/login"}
+              className={`px-4 py-2 text-xs font-semibold rounded transition-all duration-300 hover:scale-105 active:scale-95 ${
+                isDarkMode ? "text-white" : "text-black"
+              }`}
+            >
+              Login
+            </NavLink>
+          )}
         </div>
       </div>
     </nav>
