@@ -7,6 +7,8 @@ import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios'
 import { Link } from 'react-router';
 import { useNavigate } from "react-router";
+import { authApi } from '../api/api';
+import useUserStore from '../stores/Store';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,7 @@ export default function RegisterPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
+  const logout = useUserStore((state) => state.logout);
 
   const { handleSubmit, register, formState } = useForm({
     resolver: zodResolver(registerSchema),
@@ -29,12 +32,13 @@ export default function RegisterPage() {
 
   const onSubmit = async (data) => {
     try {
+      await authApi.post('/api/auth/register', data)
       console.log('test onSubmit', data)
       // Handle registration logic here
-      toast.success('Account created successfully!')
+     toast.success('Account created successfully!')
       navigate('/login')
     } catch (error) {
-      const errMsg = error.response?.data.error || error.message
+      const errMsg = error.response?.data?.message || error.message
       toast.error(errMsg)
     }
   };
@@ -136,19 +140,34 @@ export default function RegisterPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <fieldset disabled={isSubmitting}>
-              {/* Name Input */}
+              {/* First name Input */}
               <div>
                 <label className={`block text-sm ${isDarkMode ? 'text-text-primary' : 'text-gray-700'} mb-2 font-medium`}>
-                  Full Name
+                  First Name
                 </label>
                 <input
                   type="text"
                   placeholder="Enter your name"
                   className={`w-full ${isDarkMode ? 'bg-zinc-900 text-white placeholder:text-text-secondary' : 'bg-gray-100 text-black placeholder:text-gray-500'} py-2.5 px-4 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary transition-all shadow-input-3d`}
-                  {...register('name')}
+                  {...register('firstName')}
                 />
                 {errors.name && <p className={`text-sm mt-1 ${isDarkMode ? 'text-primary' : 'text-red-600'}`}>{errors.name.message}</p>}
               </div>
+
+               {/* Last name Input */}
+              <div>
+                <label className={`block text-sm ${isDarkMode ? 'text-text-primary' : 'text-gray-700'} mb-2 font-medium`}>
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  className={`w-full ${isDarkMode ? 'bg-zinc-900 text-white placeholder:text-text-secondary' : 'bg-gray-100 text-black placeholder:text-gray-500'} py-2.5 px-4 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary transition-all shadow-input-3d`}
+                  {...register('lastName')}
+                />
+                {errors.name && <p className={`text-sm mt-1 ${isDarkMode ? 'text-primary' : 'text-red-600'}`}>{errors.name.message}</p>}
+              </div>
+
 
               {/* Email Input */}
               <div className="mt-4">

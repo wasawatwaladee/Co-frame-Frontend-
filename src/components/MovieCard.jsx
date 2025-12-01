@@ -19,7 +19,7 @@ const MovieCard = ({ movie }) => {
        
 
         <img
-          src={movie.poster}
+          src={movie.thumbnail }
           alt={movie.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
           loading="lazy"

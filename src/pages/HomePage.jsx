@@ -24,6 +24,7 @@ export default function HomePage() {
   useEffect(() => {
     fetchMovies().then(setMovies).catch(console.error);
   }, []);
+  
   console.log('movies', movies)
   const filteredMovies = selectedCategory === "all" ? movies : movies.filter(movie => movie.category === selectedCategory);
 

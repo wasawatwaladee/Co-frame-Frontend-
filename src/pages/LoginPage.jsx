@@ -36,10 +36,11 @@ export default function LoginPage() {
     try {
       console.log('test onSubmit')
       await login(data)
+      toast.success('Login Successful')
       navigate('/')
       
     } catch (error) {
-      const errMsg = error.response?.data.error || error.message
+      const errMsg = error.response?.data.message || error.message
       toast.error(errMsg)
     }
   };

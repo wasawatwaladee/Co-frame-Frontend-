@@ -10,7 +10,7 @@ const useUserStore = create (persist((set,get)=> ({
       const resp = await authApi.post('/api/auth/login',input)
       console.log('resp', resp)
        set({token:resp.data.token,
-            user:resp.data.user.email
+            user:resp.data.user
         })
         return resp
     },
