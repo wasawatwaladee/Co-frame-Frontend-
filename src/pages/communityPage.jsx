@@ -13,7 +13,7 @@ function communityPage() {
   };
 
   return (
-    <>
+    
       <MainLayout>
 
       <SidebarSteam
@@ -25,7 +25,7 @@ function communityPage() {
         selectedCategory={selectedCategory}
       />
       </MainLayout>
-    </>
+    
   )
 }
 

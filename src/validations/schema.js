@@ -1,13 +1,8 @@
 import { z } from "zod";
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const mobileRegex = /^[0-9]{10,15}$/
 
 export const registerSchema = z.object({
-	email: z.string().min(2, "Email or phone-number require")
-		.refine(value => emailRegex.test(value) || mobileRegex.test(value), {
-			message: 'identity must be email or phone number'
-		}),
+	email: z.string().min(2, "Email or phone-number require"),
 	firstName: z.string().min(2, "first name is required"),
 	lastName: z.string().min(2, "last name is required"),
 	password: z.string().min(4, "password at least 4 characters"),
@@ -18,9 +13,13 @@ export const registerSchema = z.object({
 })
 
 export const loginSchema = z.object({
-	email: z.string().min(2, "Email or phone-number require")
-		.refine(value => emailRegex.test(value) || mobileRegex.test(value), {
-			message: 'identity must be email or phone number'
-		}),
+	email: z.string().min(2, "Email or phone-number require"),
 	password: z.string().min(4, "password at least 4 characters"),
 })
+
+export const googleLoginPayloadSchema = z.object({
+	// ฟิลด์นี้ควรจะเป็น ID Token หรือ Code ที่ได้รับจาก Google
+    accessToken: z.string().min(1, "Google ID Token/Code is required"), 
+    // ถ้า Backend ต้องการระบุ Client ID ด้วย ก็สามารถเพิ่มได้
+    // clientId: z.string().optional(),
+});

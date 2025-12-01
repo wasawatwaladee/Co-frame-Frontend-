@@ -1,4 +1,10 @@
 import { io } from "socket.io-client";
+import { siteConfig } from "./constant/config";
+import useUserStore from "./stores/Store";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:5500";
-export const socket = io(SERVER_URL);
+const user = useUserStore.getState().user;
+
+export const socket = io(siteConfig.SERVER_URL, {
+   auth: { username: user?.email}
+});
+
