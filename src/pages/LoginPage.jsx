@@ -33,18 +33,21 @@ export default function LoginPage() {
     try {
       console.log('test onSubmit')
       await login(data)
+      toast.success('Login Successful')
       navigate('/')
       
     } catch (error) {
-      const errMsg = error.response?.data.error || error.message
+      const errMsg = error.response?.data.message || error.message
       toast.error(errMsg)
     }
   };
 
-  const logingoogle = useGoogleLogin({
+  const  logingoogle = useGoogleLogin({
     onSuccess: (codeResponse) => {
       setUser(codeResponse); 
       console.log('Login Success:', codeResponse);
+      // login(codeResponse)
+      // navigate('/')
     },
     onError: (error) => console.log('Login Failed:', error)
   });
@@ -59,6 +62,8 @@ export default function LoginPage() {
       .then((res) => {
         setProfile(res.data);
         console.log('Full Profile Data: ', res.data);
+        login(res.data.email)
+        navigate('/')
       })
       .catch((err) => console.log("Error fetching profile:", err))
     }

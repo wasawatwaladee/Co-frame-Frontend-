@@ -1,61 +1,50 @@
 import React, { useEffect, useState } from "react";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import VideoPlayer from "../components/VideoPlayer";
 import Chat from "../components/Chat";
 import { siteConfig } from "../constant/config";
+import useUserStore from "../stores/Store";
 
 export default function RoomPage() {
   const { movieId, roomToken } = useParams();
   const [movie, setMovie] = useState(null);
 
+  const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!movieId) return;
-    const url = (import.meta.env.VITE_SERVER_URL || siteConfig.SERVER_URL) + `/movies/${movieId}`;
-    console.log("url",url)
-    fetch(url)
+
+    fetch(`${siteConfig.SERVER_URL}/movies/${movieId}`)
       .then((r) => r.json())
       .then(setMovie)
-      .catch((e) => {
-        console.error(e);
-      });
+      .catch(console.error);
   }, [movieId]);
 
-  if (!movie) return <div className="p-6 text-white">Loading movie...</div>;
+  if (!movie) return <div className="p-6 text-white">Loading...</div>;
 
   const roomId = `movie-${movie.id}-${roomToken || "default"}`;
 
-
-
-
   return (
     <>
-    <button onClick={()=>navigate('/')}>Back</button>
+      <button onClick={() => navigate("/")}>Back</button>
 
-    <div className="w-full h-screen flex bg-black text-white overflow-hidden">
-      
-      {/* LEFT — Video */}
-      <div className="flex-1 bg-black flex items-center justify-center relative">
-        <VideoPlayer roomId={roomId} movie={movie} />
-      </div>
+      <div className="w-full h-screen flex bg-black text-white overflow-hidden">
+        <div className="flex-1 bg-black flex items-center justify-center relative">
+          <VideoPlayer roomId={roomId} movie={movie} user={user} />
+        </div>
 
-      {/* RIGHT — Chat */}
-      <div className="w-[350px] bg-[#121212] border-l border-gray-800 flex flex-col">
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-800 flex justify-between items-center font-semibold text-lg">
-          Stream
-          <div className="flex items-center gap-4 text-gray-300">
-            <button>⚙️</button>
-            <button>🔗</button>
+        <div className="w-[350px] bg-[#121212] border-l border-gray-800 flex flex-col">
+          <div className="px-5 py-4 border-b border-gray-800 flex justify-between items-center font-semibold text-lg">
+            Stream
+          </div>
+
+          <div className="flex-1 min-h-0">
+            <Chat roomId={roomId} user={user} />
           </div>
         </div>
-
-        <div className="flex-1">
-          <Chat roomId={roomId} />
-        </div>
       </div>
-    </div>
     </>
   );
 }
+

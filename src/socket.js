@@ -1,4 +1,10 @@
 import { io } from "socket.io-client";
 import { siteConfig } from "./constant/config";
+import useUserStore from "./stores/Store";
 
-export const socket = io(siteConfig.SERVER_URL);
+const user = useUserStore.getState().user;
+
+export const socket = io(siteConfig.SERVER_URL, {
+   auth: { username: user?.email}
+});
+
