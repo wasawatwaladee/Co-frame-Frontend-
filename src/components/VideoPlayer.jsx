@@ -18,12 +18,8 @@ export default function VideoPlayer({ roomId, movie }) {
   const DRIFT_PLAY = 0.2; // minor drift threshold
   const DRIFT_SEEK = 0.5; // seek drift threshold
 
-
-
-//check
-console.log(movie)
-
-
+  //check
+  console.log(movie);
 
   // ---------------------- predictive + adaptive sync ----------------------
   function applyRemoteAction(action, currentTime, serverTime = Date.now()) {
@@ -41,7 +37,8 @@ console.log(movie)
     if (
       lastLocalAction.current.action === action &&
       Math.abs(lastLocalAction.current.time - predictedTime) < 0.2
-    ) return;
+    )
+      return;
 
     const drift = Math.abs(v.currentTime - predictedTime);
     const threshold = action === "seek" ? DRIFT_SEEK : DRIFT_PLAY;
@@ -173,7 +170,7 @@ console.log(movie)
 
   return (
     <div className="w-full h-full flex flex-col">
-  {/*    {user ?  <video
+      {/*    {user ?  <video
         ref={videoRef}
         src={movie.video_url}
         controls
@@ -192,20 +189,20 @@ console.log(movie)
         controls
         className="w-full h-[70vh] bg-black object-contain"
       />
-      
+
       <div className="p-4 text-lg">
         <h1>{movie.title}</h1>
       </div>
       <div className="p-4 text-sm text-gray-300">
         <div>
-          <strong>Status:</strong> {status.playing ? "Playing" : "Paused"} — time:{" "}
-          {status.time.toFixed(2)}s
+          <strong>Status:</strong> {status.playing ? "Playing" : "Paused"} —
+          time: {status.time.toFixed(2)}s
         </div>
         <div className="text-xs mt-2 text-gray-500">{info}</div>
-        <div className="mt-2 text-xs text-gray-500">Click play if autoplay blocked</div>
+        <div className="mt-2 text-xs text-gray-500">
+          Click play if autoplay blocked
+        </div>
       </div>
     </div>
   );
 }
-
-
