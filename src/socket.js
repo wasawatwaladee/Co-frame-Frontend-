@@ -1,4 +1,10 @@
 import { io } from "socket.io-client";
+import { siteConfig } from "./constant/config";
+import useUserStore from "./stores/Store";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "https://gui-bus-cartridges-incredible.trycloudflare.com";
-export const socket = io(SERVER_URL);
+const user = useUserStore.getState().user;
+
+export const socket = io(siteConfig.SERVER_URL, {
+   auth: { username: user?.email}
+});
+
