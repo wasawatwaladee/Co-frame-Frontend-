@@ -4,6 +4,7 @@ import { authApi } from "../api/api";
 
 const useUserStore = create (persist((set,get)=> ({
     user : null,
+    setUser: (user) => set ({user}),
     token: '',
     isDarkMode: true, //Kay
     login: async(input) => {
