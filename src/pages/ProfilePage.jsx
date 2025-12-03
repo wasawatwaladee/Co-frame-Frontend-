@@ -7,58 +7,85 @@ import axios from "axios";
 
 export default function ProfilePage() {
   const isDarkMode = useUserStore((state) => state.isDarkMode);
-  const token = useUserStore(state => state.token)
+  const token = useUserStore((state) => state.token);
   const logout = useUserStore((state) => state.logout);
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); 
 
   const [formData, setFormData] = useState({
-    name: "",
-    email:"",
-    bio: "Movie enthusiast and streaming lover",
-    favoriteGenre: "Action",
+    firstName: "",
+    lastName: "",
+    email: "",
+    bio: "",
+    favoriteGenre: "",
     joinDate: "",
-    username: "@",
+    username: "",
   });
 
-
   useEffect(() => {
-      const fetchProfile = async () => {
-        try {
-          if (!token) return;
+    const fetchProfile = async () => {
+      try {
+        if (!token) return;
 
-          const res = await axios.get("http://localhost:5500/api/auth/me", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          console.log("FetchUser", res.data.user);
-           //update zustand
-          useUserStore.setState({ user: res.data.user });
-          // update form
-          setFormData((prev) => ({
-            ...prev,
-            username: res.data.user.username || "@user",
-            name: `${res.data.user.firstName} ${res.data.user.lastName}`,
-            email: res.data.user.email,
-            joinDate: new Date(res.data.user.createdAt).toLocaleDateString(),
-          }));
-        } catch (error) {
-          console.error(error);
+        const res = await axios.get("http://localhost:5500/api/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("FetchUser", res.data.user);
+        //update zustand
+        useUserStore.setState({ user: res.data.user });
+        // update form
+        setFormData((prev) => ({
+          ...prev,
+          username: res.data.user.username,
+          firstName: `${res.data.user.firstName} `,
+          lastName: `${res.data.user.lastName}`,
+          email: res.data.user.email,
+          bio: res.data.user.bio,
+          favoriteGenre: res.data.user.favoriteGenre ?? "",
+          joinDate: res.data.user.createdAt
+            ? new Date(res.data.user.createdAt).toLocaleDateString()
+            : "Unknown",
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const handleEditProfile = async () => {
+    console.log("✅ handleEditProfile CLICKED");
+    try {
+      const token = useUserStore.getState().token;
+
+      const res = await axios.put(
+        "http://localhost:5500/api/auth/me",
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          username: formData.username,
+          email: formData.email,
+          bio: formData.bio ?? "",
+          favoriteGenre: formData.favoriteGenre,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      };
-      fetchProfile();
-    },
-    []);
+      );
 
+      // update store
+      useUserStore.setState({ user: res.data.user });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to update profile", error);
+    }
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log("Profile updated:", formData);
   };
 
   const handleLogout = () => {
@@ -104,20 +131,23 @@ export default function ProfilePage() {
                       />
                     </svg>
                   </div>
+
+                  {/* User Info */}
                   <div className="flex flex-col justify-center gap-1">
                     <h1
                       className={`text-2xl font-bold sm:text-3xl ${
                         isDarkMode ? "text-white" : "text-black"
                       }`}
                     >
-                      {formData.name}
+                      {formData.firstName}
+                      {formData.lastName}
                     </h1>
                     <p
                       className={`text-sm ${
                         isDarkMode ? "text-zinc-400" : "text-gray-600"
                       }`}
                     >
-                      @alex_doe
+                      {formData.username}
                     </p>
                     <p
                       className={`mt-1 hidden text-sm sm:block ${
@@ -263,12 +293,30 @@ export default function ProfilePage() {
                         isDarkMode ? "text-zinc-300" : "text-gray-700"
                       }`}
                     >
-                      Full Name
+                      First Name
                     </label>
                     <input
                       type="text"
-                      name="name"
-                      value={formData.name}
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
+                        isDarkMode
+                          ? "bg-zinc-800 text-white border-zinc-700 placeholder:text-zinc-500"
+                          : "bg-white text-black border-gray-300 placeholder:text-gray-400"
+                      }`}
+                    />
+                    <label
+                      className={`block text-sm font-medium mb-3 ${
+                        isDarkMode ? "text-zinc-300" : "text-gray-700"
+                      }`}
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
                         isDarkMode
@@ -355,19 +403,20 @@ export default function ProfilePage() {
                           : "bg-white text-black border-gray-300"
                       }`}
                     >
-                      <option>Action</option>
-                      <option>Comedy</option>
-                      <option>Drama</option>
-                      <option>Horror</option>
-                      <option>Sci-Fi</option>
-                      <option>Romance</option>
-                      <option>Thriller</option>
+                      <option value="Action">Action</option>
+                      <option value="Comedy">Comedy</option>
+                      <option value="Drama">Drama</option>
+                      <option value="Horror">Horror</option>
+                      <option value="SciFi">Sci-Fi</option>
+                      <option value="Romance">Romance</option>
+                      <option value="Thriller">Thriller</option>
                     </select>
                   </div>
                   <div className="flex gap-4">
                     <button
-                      onClick={handleSave}
-                      className="flex-1 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:opacity-90 transition-opacity"
+                      type="button"
+                      onClick={handleEditProfile}
+                      className="flex-1 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:opacity-90 transition-opacity cursor-pointer"
                     >
                       Save Changes
                     </button>
@@ -407,7 +456,8 @@ export default function ProfilePage() {
                         isDarkMode ? "text-white" : "text-black"
                       }`}
                     >
-                      {formData.name}
+                      {formData.firstName}
+                      {formData.lastName}
                     </p>
                   </div>
                   <div>
