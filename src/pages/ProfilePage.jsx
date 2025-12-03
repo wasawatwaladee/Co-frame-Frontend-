@@ -119,7 +119,7 @@ export default function ProfilePage() {
                     </select>
                   </div>
                   <div className="flex gap-4">
-                    <button onClick={handleSave} className="flex-1 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:opacity-90 transition-opacity">
+                    <button onClick={handleSave} className="bg-amber-400 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:opacity-90 transition-opacity">
                       Save Changes
                     </button>
                     {/* <button onClick={handleLogout} className={`flex-1 px-6 py-3 rounded-lg font-bold transition-opacity hover:opacity-90 ${isDarkMode ? 'bg-red-900 text-white' : 'bg-red-100 text-red-900'}`}>

@@ -3,7 +3,7 @@ import { siteConfig } from "../constant/config";
 
 export async function fetchMovies() {
   const res = await fetch(`${siteConfig.SERVER_URL}/movies`);
-  return res.json();
+  return res.json(res);
 }
 
 export async function fetchMovie(id) {

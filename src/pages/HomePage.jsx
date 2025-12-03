@@ -27,6 +27,7 @@ export default function HomePage() {
   
   console.log('movies', movies)
   const filteredMovies = selectedCategory === "all" ? movies : movies.filter(movie => movie.category === selectedCategory);
+  console.log("filteredMovies",filteredMovies)
 
   return (
     <MainLayout>
@@ -78,4 +79,3 @@ export default function HomePage() {
     </MainLayout>
   );
 }
-

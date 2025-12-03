@@ -5,6 +5,6 @@ import useUserStore from "./stores/Store";
 const user = useUserStore.getState().user;
 
 export const socket = io(siteConfig.SERVER_URL, {
-   auth: { username: user?.email}
+   auth: { username: user?.username || null}
 });
 
