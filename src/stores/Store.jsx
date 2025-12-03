@@ -6,6 +6,7 @@ const useUserStore = create (persist((set,get)=> ({
     user : null,
     token: '',
     isDarkMode: true, //Kay
+
     login: async(input) => {
       const resp = await authApi.post('/api/auth/login',input)
       console.log('resp', resp)
@@ -14,11 +15,25 @@ const useUserStore = create (persist((set,get)=> ({
         })
         return resp
     },
-    logout : ()=> set({
+
+    googleLogin: (token, user) => {
+
+        localStorage.clear();
+        
+        set({
+            token: token,
+            user: user,
+            // isDarkMode จะถูกตั้งค่าตาม default: true หรือตามที่ persist กำหนด
+        });
+    },
+
+    logout : ()=> {
+        set({
       token: '', 
-      user: null,
+      user: null, 
       isLoggedIn: false,
-     }),
+     });
+    },
     toggleTheme: () => set((state) => ({ isDarkMode: !state.isDarkMode })) //Kay
 }), {
     name: 'useUserStore',
