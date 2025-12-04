@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import { useForm } from "react-hook-form";
 import { loginSchema } from "../validations/schema";
 import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios'
 import { Link } from 'react-router';
 import { useNavigate } from "react-router";
 import useUserStore from "../stores/Store";
@@ -15,6 +14,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const login = useUserStore(state=> state.login);
+  const googleLogin = useUserStore(state => state.googleLogin);
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
   const [googleResponse, setGoogleResponse] = useState(null);   
@@ -62,23 +62,16 @@ export default function LoginPage() {
         console.log("Sending ID Token to backend...");
 
         try {
-            //ส่ง ID Token (credential) ไปที่ Backend Endpoint
-            const res = await axios.post(API_URL, {
-                idToken: googleResponse.credential, // ส่ง ID Token
-            });
+            const idToken = googleResponse.credential;
+
+            const res = await googleLogin(idToken);
+
+            const { user: userProfile } = res.data;
             
-            //ถ้า Backend ตอบกลับสำเร็จ จะมี App Token และ user profile
-            const { token: appToken, user: userProfile } = res.data;
-            
-            if (appToken) {
-                toast.success(`Welcome, ${userProfile.name}!`);
-                
-                // เก็บ token และข้อมูลผู้ใช้ใน Global Store
-                login({ token: appToken, user: userProfile }); 
+            toast.success(`Welcome, ${userProfile.name}!`);
                 
                 setProfile(userProfile); 
                 navigate('/');
-            }
         } catch (error) {
             const errMsg = error.response?.data.message || error.message;
             console.error("Backend Error:", error);
@@ -89,7 +82,7 @@ export default function LoginPage() {
     
     handleBackendLogin();
 
-  }, [googleResponse, login, navigate]);
+  }, [googleResponse, googleLogin , navigate]);
 
   const logout = () => {
     setGoogleResponse(null);

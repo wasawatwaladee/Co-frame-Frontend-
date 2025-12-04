@@ -1,7 +1,6 @@
 import {
   createBrowserRouter,
   Navigate,
-  Outlet,
   RouterProvider,
 } from "react-router";
 
@@ -12,31 +11,46 @@ import CommunityPage from "../pages/communityPage";
 import AdminPage from "../pages/AdminPage";
 import RegisterPage from "../pages/RegisterPage";
 import ProfilePage from "../pages/ProfilePage";
+import ProtectedRoute from "../components/ProtectedRoute";
+import useUserStore from "../stores/Store";
 
-const guestRouter = createBrowserRouter([
-  { path: "/", element: <LoginPage /> },
-  { path: "*", element: <Navigate to="/" /> },
-]);
 
-const userRouter = createBrowserRouter([
+const router = createBrowserRouter([
+
   { path: "/", element: <HomePage /> },
   { path: "*", element: <Navigate to="/" /> },
-  { path: "login", element: <LoginPage /> },
-  { path: "register", element: <RegisterPage /> },
-
-  { path: "admin", element: <AdminPage /> },
-  { path: "profile", element: <ProfilePage /> }, //Kay
-  { path: "profile/:username", element: <ProfilePage /> }, 
-
-  { path: "/room/:movieId/:roomToken?", element: <RoomPage /> },
-
   { path: "community", element: <CommunityPage /> },
+
+  {
+    element: <ProtectedRoute allowedRoles={['guest']} redirectPath="/" />,
+    children: [
+      { path: "login", element: <LoginPage /> },
+      { path: "register", element: <RegisterPage /> },
+    ]
+  },
+
+  {
+    element: <ProtectedRoute allowedRoles={['USER', 'ADMIN']} redirectPath="/login" />,
+    children: [
+      { path: "profile", element: <ProfilePage /> }, // Kay
+      { path: "profile/:username", element: <ProfilePage /> },
+      { path: "room/:movieId/:roomToken?", element: <RoomPage /> }, 
+    ],
+  },
+
+  {
+    element: <ProtectedRoute allowedRoles={['ADMIN']} redirectPath="/" />, 
+    children: [
+      { path: "admin", element: <AdminPage /> },
+    ],
+  },
+
+  { path: "*", element: <Navigate to="/" /> },
 ]);
 
 function AppRouter() {
-  const user = "andy@ggg.mail";
-  const finalRouter = user ? userRouter : guestRouter;
-  return <RouterProvider router={finalRouter} />;
+  const token = useUserStore(state => state.token);
+  return <RouterProvider router={router} />;
 }
 
 export default AppRouter;
