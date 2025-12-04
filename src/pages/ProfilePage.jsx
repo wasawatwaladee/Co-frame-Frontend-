@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../layouts/Layout";
 import useUserStore from "../stores/Store";
 import { useEffect } from "react";
@@ -10,7 +10,14 @@ export default function ProfilePage() {
   const token = useUserStore((state) => state.token);
   const logout = useUserStore((state) => state.logout);
   const navigate = useNavigate();
+  const {username} = useParams()
+  const setUser = useUserStore((state) => state.setUser);
+  // ใช้เฉพาะเวลาที่ owner แก้ไขโปรไฟล์
   const [isEditing, setIsEditing] = useState(false); 
+
+  // State สำหรับข้อมูลโปรไฟล์
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -22,44 +29,94 @@ export default function ProfilePage() {
     username: "",
   });
 
-  useEffect(() => {
-    const fetchProfile = async () => {
+  useEffect(()=>{
+    const loadProfile = async ()=> {
       try {
-        if (!token) return;
+        let res
+        if(username){
+          res = await axios.get(
+            `http://localhost:5500/api/auth/me/${username.toLowerCase()}`
+          );
+          setProfileData(res.data.user)
+          // ใส่ค่าใน form แต่ไม่ให้ edit
+          setFormData({
+            firstName: res.data.user.firstName || "",
+            lastName: res.data.user.lastName || "",
+            email: res.data.user.email || "",
+            bio: res.data.user.bio || "",
+            favoriteGenre: res.data.user.favoriteGenre || "",
+            joinDate: res.data.user.createdAt
+              ? new Date(res.data.user.createdAt).toLocaleDateString()
+              : "Unknown",
+            username: res.data.user.username || "",
+          });
+          setLoading(false);
+          return;
+        }
+        if (token) {
+          res = await axios.get("http://localhost:5500/api/auth/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-        const res = await axios.get("http://localhost:5500/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log("FetchUser", res.data.user);
-        //update zustand
-        useUserStore.setState({ user: res.data.user });
-        // update form
-        setFormData((prev) => ({
-          ...prev,
-          username: res.data.user.username,
-          firstName: `${res.data.user.firstName} `,
-          lastName: `${res.data.user.lastName}`,
-          email: res.data.user.email,
-          bio: res.data.user.bio,
-          favoriteGenre: res.data.user.favoriteGenre ?? "",
-          joinDate: res.data.user.createdAt
-            ? new Date(res.data.user.createdAt).toLocaleDateString()
-            : "Unknown",
-        }));
+          setUser(res.data.user);
+          setProfileData(res.data.user);
+
+          setFormData({
+            firstName: res.data.user.firstName || "",
+            lastName: res.data.user.lastName || "",
+            email: res.data.user.email || "",
+            bio: res.data.user.bio || "",
+            favoriteGenre: res.data.user.favoriteGenre || "",
+            joinDate: res.data.user.createdAt
+              ? new Date(res.data.user.createdAt).toLocaleDateString()
+              : "Unknown",
+            username: res.data.user.username || "",
+          });
+        }
+        setLoading(false);
       } catch (error) {
-        console.error(error);
+        console.error("Failed to load profile:", error);
+        setLoading(false);
       }
-    };
-    fetchProfile();
-  }, []);
+    }
+    loadProfile()
+  },[username, token, setUser])
+
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       if (!token) return;
+
+  //       const res = await axios.get("http://localhost:5500/api/auth/me", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       console.log("FetchUser", res.data.user);
+  //       //update zustand
+  //       useUserStore.setState({ user: res.data.user });
+  //       // update form
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         username: res.data.user.username,
+  //         firstName: `${res.data.user.firstName} `,
+  //         lastName: `${res.data.user.lastName}`,
+  //         email: res.data.user.email,
+  //         bio: res.data.user.bio,
+  //         favoriteGenre: res.data.user.favoriteGenre ?? "",
+  //         joinDate: res.data.user.createdAt
+  //           ? new Date(res.data.user.createdAt).toLocaleDateString()
+  //           : "Unknown",
+  //       }));
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   fetchProfile();
+  // }, []);
 
   const handleEditProfile = async () => {
-    console.log("✅ handleEditProfile CLICKED");
     try {
-      const token = useUserStore.getState().token;
-
       const res = await axios.put(
         "http://localhost:5500/api/auth/me",
         {
@@ -67,7 +124,7 @@ export default function ProfilePage() {
           lastName: formData.lastName,
           username: formData.username,
           email: formData.email,
-          bio: formData.bio ?? "",
+          bio: formData.bio,
           favoriteGenre: formData.favoriteGenre,
         },
         {
@@ -75,14 +132,41 @@ export default function ProfilePage() {
         }
       );
 
-      // update store
-      useUserStore.setState({ user: res.data.user });
-
+      setUser(res.data.user);
+      setProfileData(res.data.user);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update profile", error);
     }
   };
+  // const handleEditProfile = async () => {
+  //   console.log("✅ handleEditProfile CLICKED");
+  //   try {
+  //     const token = useUserStore.getState().token;
+
+  //     const res = await axios.put(
+  //       "http://localhost:5500/api/auth/me",
+  //       {
+  //         firstName: formData.firstName,
+  //         lastName: formData.lastName,
+  //         username: formData.username,
+  //         email: formData.email,
+  //         bio: formData.bio ?? "",
+  //         favoriteGenre: formData.favoriteGenre,
+  //       },
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     );
+
+  //     // update store
+  //     useUserStore.setState({ user: res.data.user });
+
+  //     setIsEditing(false);
+  //   } catch (error) {
+  //     console.error("Failed to update profile", error);
+  //   }
+  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -92,6 +176,11 @@ export default function ProfilePage() {
     logout();
     navigate("/login");
   };
+  if (loading) return <div>Loading...</div>;
+  if (!profileData)
+    return <div className="text-red-500 text-center">User not found</div>;
+
+  const isOwner = !username; // ถ้าไม่มี username param → คือ owner
 
   return (
     <MainLayout>
@@ -139,32 +228,35 @@ export default function ProfilePage() {
                         isDarkMode ? "text-white" : "text-black"
                       }`}
                     >
-                      {formData.firstName}
-                      {formData.lastName}
+                      {profileData.firstName}
+                      {profileData.lastName}
                     </h1>
                     <p
                       className={`text-sm ${
                         isDarkMode ? "text-zinc-400" : "text-gray-600"
                       }`}
                     >
-                      {formData.username}
+                      {profileData.username}
                     </p>
                     <p
                       className={`mt-1 hidden text-sm sm:block ${
                         isDarkMode ? "text-zinc-400" : "text-gray-600"
                       }`}
                     >
-                      {formData.bio}
+                      {profileData.bio}
                     </p>
                     <p
                       className={`text-xs ${
                         isDarkMode ? "text-zinc-500" : "text-gray-500"
                       }`}
                     >
-                      Joined {formData.joinDate}
+                      Joined {profileData.joinDate}
                     </p>
                   </div>
                 </div>
+
+                {/* Edit Button */}
+                {isOwner && (
                 <button
                   onClick={() => setIsEditing(!isEditing)}
                   className={`flex h-10 w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg px-5 text-sm font-bold transition-opacity sm:w-auto ${
@@ -181,6 +273,7 @@ export default function ProfilePage() {
                     {isEditing ? "Cancel" : "Edit Profile"}
                   </span>
                 </button>
+                )}
               </div>
             </section>
 
@@ -273,7 +366,7 @@ export default function ProfilePage() {
             )}
 
             {/* Edit Form */}
-            {isEditing && (
+            { isOwner && isEditing && (
               <section
                 className={`rounded-xl p-6 ${
                   isDarkMode ? "bg-zinc-900" : "bg-gray-50"
@@ -420,9 +513,6 @@ export default function ProfilePage() {
                     >
                       Save Changes
                     </button>
-                    {/* <button onClick={handleLogout} className={`flex-1 px-6 py-3 rounded-lg font-bold transition-opacity hover:opacity-90 ${isDarkMode ? 'bg-red-900 text-white' : 'bg-red-100 text-red-900'}`}>
-                      Logout
-                    </button> */}
                   </div>
                 </div>
               </section>
@@ -456,8 +546,8 @@ export default function ProfilePage() {
                         isDarkMode ? "text-white" : "text-black"
                       }`}
                     >
-                      {formData.firstName}
-                      {formData.lastName}
+                      {profileData.firstName}
+                      {profileData.lastName}
                     </p>
                   </div>
                   <div>
@@ -473,7 +563,7 @@ export default function ProfilePage() {
                         isDarkMode ? "text-white" : "text-black"
                       }`}
                     >
-                      {formData.email}
+                      {profileData.email}
                     </p>
                   </div>
                   <div className="md:col-span-2">
@@ -489,7 +579,7 @@ export default function ProfilePage() {
                         isDarkMode ? "text-white" : "text-black"
                       }`}
                     >
-                      {formData.bio}
+                      {profileData.bio}
                     </p>
                   </div>
                   <div>
@@ -507,7 +597,7 @@ export default function ProfilePage() {
                           : "bg-primary/10 text-primary"
                       }`}
                     >
-                      {formData.favoriteGenre}
+                      {profileData.favoriteGenre}
                     </span>
                   </div>
                 </div>

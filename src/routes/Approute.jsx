@@ -26,6 +26,7 @@ const userRouter = createBrowserRouter([
 
   { path: "admin", element: <AdminPage /> },
   { path: "profile", element: <ProfilePage /> }, //Kay
+  { path: "profile/:username", element: <ProfilePage /> }, 
 
   { path: "/room/:movieId/:roomToken?", element: <RoomPage /> },
 
