@@ -1,32 +1,31 @@
-import { useState } from 'react'
-import MainLayout from '../layouts/Layout'
-import SidebarTrending from '../components/SidebarTrending'
-import SidebarSteam from '../components/SidebarSteam'
-import PostContainer from '../components/PostContainer'
+import { useState } from "react";
+import MainLayout from "../layouts/Layout";
+import SidebarTrending from "../components/SidebarTrending";
+import PostContainer from "../components/PostContainer";
+import SidebarCommunity from "../components/SidebarSteam";
 
 function communityPage() {
-  const [selectedCategory, setSelectedCategory] = useState('HORROR');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    console.log(`Category clicked: ${category}`);
+  const handleCategoryClick = (id) => {
+    setSelectedCategoryId(id);
+    console.log(`Category ID clicked: ${id}`);
   };
 
   return (
-    
-      <MainLayout>
+    <MainLayout>
+      <SidebarCommunity
+        onSelect={handleCategoryClick}
+        activeId={selectedCategoryId}
+      />
 
-      <SidebarSteam
-        onCategorySelect={handleCategoryClick}
-        activeCategory={selectedCategory}
-      />
-      <PostContainer />
-      <SidebarTrending
-        selectedCategory={selectedCategory}
-      />
-      </MainLayout>
-    
-  )
+      <div className="ml-64 pt-4">
+        <PostContainer categoryId={selectedCategoryId} />
+      </div>
+
+      <SidebarTrending selectedCategory="ALL" />
+    </MainLayout>
+  );
 }
 
-export default communityPage
+export default communityPage;

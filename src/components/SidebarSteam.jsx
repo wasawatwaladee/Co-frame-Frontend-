@@ -1,73 +1,69 @@
-// import React from 'react'
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-// function SidebarSteam({ onCategorySelect, activeCategory }) {
+// รับ Props:
+// onSelect: ฟังก์ชันส่งค่า ID กลับไปบอกหน้าหลักว่าเลือกหมวดไหน
+// activeId: ID ที่ถูกเลือกอยู่ (เพื่อทำไฮไลท์สีแดง)
+function SidebarCommunity({ onSelect, activeId }) {
+  const [categories, setCategories] = useState([]);
 
-//   const categories = ['ALL','HORROR', 'COMEDY', 'SCI-FI', 'CARTOON'];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        // ยิงไป API ที่เราทำไว้สำหรับ Community Category
+        // (Route ที่คุณทำไว้ใน categories.route.js)
+        const res = await axios.get("http://localhost:5500/api/categories");
 
+        // res.data.categories ควรจะเป็น array ของ object: [{id: 1, name: "Review"}, ...]
+        // เราจะเพิ่ม "ALL POSTS" ไว้ตัวแรกสุด
+        const allOption = { id: null, name: "ALL POSTS" };
 
-//   return (
-//     <div className='fixed top-0 mt-20 left-0 h-[calc(100vh-80px)] w-64 p-4 overflow-y-auto bg-black text-white z-40'>
-      
-//       <div className="flex flex-col space-y-1 mt-4">
-//         {categories.map((category) => (
-//           <a
-//             key={category}
-//             href="#"
+        setCategories([allOption, ...res.data.categories]);
+      } catch (error) {
+        console.error("Error fetching community categories:", error);
+      }
+    };
 
-//             onClick={(e) => {
-//               e.preventDefault();
-//               onCategorySelect(category);
-//             }}
-//             className={`
-//                             flex items-center p-2 rounded-lg transition duration-150 
-//                             ${category === activeCategory
-//                 ? 'bg-white text-black font-bold shadow-lg'
-//                 : 'hover:bg-gray-800 text-gray-300'
-//               }
-//                         `}
-//           >
-
-//             <span className="ml-3">{category}</span>
-//           </a>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
-
-// export default SidebarSteam
-import React from 'react';
-
-function SidebarSteam({ onCategorySelect, activeCategory }) {
-  const categories = ['ALL', 'HORROR', 'COMEDY', 'SCI-FI', 'CARTOON'];
+    fetchCategories();
+  }, []);
 
   return (
-    <div className="fixed top-0 mt-20 left-0 h-[calc(100vh-80px)] w-64 p-4 overflow-y-auto bg-black text-white z-40 shadow-xl border-r border-gray-800">
+    <div className="fixed top-0 mt-20 left-0 h-[calc(100vh-80px)] w-64 p-4 overflow-y-auto bg-black text-white z-40 shadow-xl border-r border-gray-800 scrollbar-hide">
+      <h3 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4 ml-2 mt-2">
+        Community Board
+      </h3>
 
-      <div className="flex flex-col space-y-2 mt-4">
+      <div className="flex flex-col space-y-2">
         {categories.map((category) => (
           <button
-            key={category}
-            onClick={() => onCategorySelect(category)}
+            key={category.id || "all"} // ใช้ id เป็น key (ถ้าเป็น all ให้ใช้ string 'all')
+            onClick={() => onSelect(category.id)} // ส่ง ID กลับไป (ไม่ใช่ส่งชื่อ)
             className={`
               relative flex items-center p-3 rounded-lg text-left transition-all duration-200 group
-              ${category === activeCategory
-                ? 'bg-red-600 text-white font-semibold shadow-md'
-                : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+              ${
+                // เช็คว่า ID ตรงกันไหม (ถ้า activeId เป็น null และ category.id เป็น null คือเลือก ALL)
+                activeId === category.id
+                  ? "bg-red-600 text-white font-semibold shadow-md shadow-red-900/20"
+                  : "text-gray-400 hover:bg-gray-800 hover:text-white"
               }
             `}
           >
-            {/* Left Accent Bar */}
+            {/* เส้นสีแดงด้านซ้าย */}
             <span
               className={`
-                absolute left-0 top-0 h-full w-1 rounded-r-md transition-all
-                ${category === activeCategory ? 'bg-red-400' : 'bg-transparent group-hover:bg-gray-500'}
+                absolute left-0 top-0 h-full w-1 rounded-r-md transition-all duration-300
+                ${
+                  activeId === category.id
+                    ? "bg-white"
+                    : "bg-transparent group-hover:bg-red-500"
+                }
               `}
             />
 
-            {/* Category Name */}
-            <span className="ml-3 tracking-wide">{category}</span>
+            {/* ชื่อหมวดหมู่ */}
+            <span className="ml-3 tracking-wide truncate text-sm">
+              {category.name}
+            </span>
           </button>
         ))}
       </div>
@@ -75,4 +71,4 @@ function SidebarSteam({ onCategorySelect, activeCategory }) {
   );
 }
 
-export default SidebarSteam;
+export default SidebarCommunity;
