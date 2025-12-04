@@ -1,30 +1,26 @@
-import  { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+
 import { socket } from "../socket";
 
 export default function Chat({ roomId, user }) {
   const [messages, setMessages] = useState([]);
+
   const [input, setInput] = useState("");
+
   const messagesRef = useRef(null);
-  const [myName, setMyName] = useState("");
+  console.log('socket', socket)
+
+  const [myId, setMyId] = useState(user?.username || socket.id);
 
   useEffect(() => {
-    // เข้าห้องก่อน
-    socket.emit("join_room", { roomId });
-
-    // ตั้งชื่อผู้ใช้
-    // socket.emit("set_name", {
-    //   roomId,
-    //   sender: user?.email || user?.firstName || null
-    // });
-
-    socket.on("your_name", (name) => setMyName(name));
-
+    
     socket.on("receive_chat", (msg) => {
       setMessages((prev) => [...prev, msg]);
 
       setTimeout(() => {
         messagesRef.current?.scrollTo({
           top: messagesRef.current.scrollHeight,
+
           behavior: "smooth",
         });
       }, 40);
@@ -32,10 +28,14 @@ export default function Chat({ roomId, user }) {
 
     socket.on("room_state", (state) => {
       if (state?.chat) setMessages(state.chat);
+
+      // ⭐️ เพิ่มการอัปเดต myName จาก state.yourName
+      if (state?.yourName) setMyId(state.yourName);
     });
 
+    // Cleanup Listener
     return () => {
-      socket.off("your_name");
+      socket.off("your_name"); 
       socket.off("receive_chat");
       socket.off("room_state");
     };
@@ -46,6 +46,7 @@ export default function Chat({ roomId, user }) {
 
     socket.emit("send_chat", {
       roomId,
+
       text: input,
     });
 
@@ -59,7 +60,11 @@ export default function Chat({ roomId, user }) {
         className="flex-1 p-4 overflow-y-auto min-h-0 space-y-3"
       >
         {messages.map((m, i) => {
-          const isMe = m.sender === myName;
+          // const isMe = m.sender === myName;
+          const isMe = myId === m.socketId || myId === m.sender;
+          console.log('m', m)
+          console.log("m.sender", m.sender);
+          console.log("myName", myId);
 
           return (
             <div
@@ -75,11 +80,9 @@ export default function Chat({ roomId, user }) {
                     : "bg-gray-800 text-gray-200 rounded-bl-none"
                 }`}
               >
-                {!isMe && (
-                  <div className="text-xs text-gray-400 mb-1">
-                    {m.sender}
-                  </div>
-                )}
+                
+                  <div className="text-xs text-gray-400 mb-1">{m.sender}</div>
+                
 
                 <div>{m.text}</div>
 
@@ -100,6 +103,7 @@ export default function Chat({ roomId, user }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
         />
+
         <button onClick={send} className="px-3 py-2 bg-blue-600 rounded-md">
           Send
         </button>
@@ -107,5 +111,3 @@ export default function Chat({ roomId, user }) {
     </div>
   );
 }
-
-

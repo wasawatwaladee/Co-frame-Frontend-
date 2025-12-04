@@ -1,3 +1,4 @@
+// MovieCard.jsx (ปรับปรุงสำหรับ Password Modal)
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -5,13 +6,9 @@ import { useNavigate } from "react-router-dom";
 const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
 
-//   const openRoom = () => {
-//   const token = Math.random().toString(36).slice(2, 9);
-//   navigate(`/room/${movie.id}/${token}`);
-// };
-
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [code, setCode] = useState("")
+  const [partyPassword, setPartyPassword] = useState("") // ⭐️ เพิ่ม state สำหรับรหัสผ่านห้อง
 
   const openSingle = ()=>{
     navigate(`/room/${movie.id}`)
@@ -20,23 +17,25 @@ const MovieCard = ({ movie }) => {
   const openParty = () => {
     const token = Math.random().toString(36).slice(2,9).toUpperCase()
     setCode(token)
+    // ⭐️ ไม่ต้องรีเซ็ตรหัสผ่านตรงนี้ เพราะผู้ใช้เพิ่งกรอก
+    // แต่เปิด Modal
   }
 
   const startParty = () => {
-    navigate(`/room/${movie.id}/${code}`)
+    // ⭐️ ส่งรหัสผ่านไปเป็น Query Parameter (เข้ารหัส URI เพื่อความปลอดภัย)
+    const encodedPassword = encodeURIComponent(partyPassword);
+    navigate(`/room/${movie.id}/${code}${partyPassword ? `?pass=${encodedPassword}` : ''}`);
   }
 
 
   return (
     <div>
     <div className="group relative cursor-pointer">
-       {/* <button onClick={()=>openRoom()}> */}
        <button onClick={()=>setIsModalOpen(true)}>
 
       <div className="aspect-2/3 w-full overflow-hidden rounded-lg bg-cardBg shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:shadow-xl">
         {/* Poster Image */}
        
-
         <img
           src={movie.thumbnail }
           alt={movie.title}
@@ -77,6 +76,8 @@ const MovieCard = ({ movie }) => {
                 >
                   Single Private
                 </button>
+                
+               
 
                 <button
                   onClick={openParty}
@@ -86,10 +87,18 @@ const MovieCard = ({ movie }) => {
                 </button>
               </>
             )}
+
+
+
+            
             {code && (
               <div className="text-center">
                 <h3 className="font-semibold">Your Party Code</h3>
                 <p className="text-2xl font-bold my-3">{code}</p>
+
+                {partyPassword && (
+                    <p className="text-sm text-gray-500 mb-4">Password: {partyPassword}</p>
+                )}
 
                 <button
                   onClick={startParty}
@@ -103,6 +112,7 @@ const MovieCard = ({ movie }) => {
               className="mt-4 w-full text-center text-gray-600 text-sm"
               onClick={() => {
                 setCode("");
+                setPartyPassword("");
                 setIsModalOpen(false);
               }}
             >

@@ -13,7 +13,7 @@ function SidebarCommunity({ onSelect, activeId }) {
         // ยิงไป API ที่เราทำไว้สำหรับ Community Category
         // (Route ที่คุณทำไว้ใน categories.route.js)
         const res = await axios.get("http://localhost:5500/api/categories");
-
+        console.log('res', res)
         // res.data.categories ควรจะเป็น array ของ object: [{id: 1, name: "Review"}, ...]
         // เราจะเพิ่ม "ALL POSTS" ไว้ตัวแรกสุด
         const allOption = { id: null, name: "ALL POSTS" };
