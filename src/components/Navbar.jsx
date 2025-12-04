@@ -207,7 +207,7 @@ const Navbar = () => {
                 isDarkMode ? "text-white" : "text-black"
               }`}
             >
-              {typeof user === 'string' ? user : user.name || user.email || 'Profile'}
+              {typeof user === 'string' ? user : user.username || user.email || 'Profile'}
             </NavLink>
           ) : (
             <NavLink
