@@ -19,15 +19,6 @@ const router = createBrowserRouter([
 
   { path: "/", element: <HomePage /> },
   { path: "*", element: <Navigate to="/" /> },
-  { path: "login", element: <LoginPage /> },
-  { path: "register", element: <RegisterPage /> },
-
-  { path: "admin", element: <AdminPage /> },
-  { path: "profile", element: <ProfilePage /> }, //Kay
-  { path: "profile/:username", element: <ProfilePage /> }, 
-
-  { path: "/room/:movieId/:roomToken?", element: <RoomPage /> },
-
   { path: "community", element: <CommunityPage /> },
 
   {
@@ -42,6 +33,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={['USER', 'ADMIN']} redirectPath="/login" />,
     children: [
       { path: "profile", element: <ProfilePage /> }, // Kay
+      { path: "profile/:username", element: <ProfilePage /> },
       { path: "room/:movieId/:roomToken?", element: <RoomPage /> }, 
     ],
   },
