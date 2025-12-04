@@ -7,6 +7,8 @@ const useUserStore = create(persist((set, get) => ({
     user: null,
     token: '',
     isDarkMode: true, //Kay
+    movies:[],
+    categories:[],
 
     setUser: (user) => set({ user: user }),
 
@@ -15,9 +17,9 @@ const useUserStore = create(persist((set, get) => ({
         console.log('resp', resp)
         set({
             token: resp.data.token,
-            user: resp.data.user
-    movies:[],
-    categories:[],
+            user: resp.data.user})},
+   
+    
     getMovies: async() => {
         try {
             const resp = await authApi.get('/movies')
@@ -38,14 +40,7 @@ const useUserStore = create(persist((set, get) => ({
             throw error
         }
     },
-    login: async(input) => {
-      const resp = await authApi.post('/api/auth/login',input)
-      console.log('resp', resp)
-       set({token:resp.data.token,
-            user:resp.data.user
-        })
-        return resp
-    },
+   
 
     googleLogin: async (idToken) => {
 
