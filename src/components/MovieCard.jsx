@@ -87,6 +87,10 @@ const MovieCard = ({ movie }) => {
                 </button>
               </>
             )}
+
+
+
+            
             {code && (
               <div className="text-center">
                 <h3 className="font-semibold">Your Party Code</h3>
