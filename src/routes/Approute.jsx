@@ -18,18 +18,18 @@ import useUserStore from "../stores/Store";
 const router = createBrowserRouter([
 
   { path: "/", element: <HomePage /> },
+  { path: "community", element: <CommunityPage /> },
 
   {
     element: <ProtectedRoute allowedRoles={['guest']} redirectPath="/" />,
     children: [
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
-      { path: "community", element: <CommunityPage /> },
     ]
   },
 
   {
-    element: <ProtectedRoute allowedRoles={['USER', 'admin']} redirectPath="/login" />,
+    element: <ProtectedRoute allowedRoles={['USER', 'ADMIN']} redirectPath="/login" />,
     children: [
       { path: "profile", element: <ProfilePage /> }, // Kay
       { path: "room/:movieId/:roomToken?", element: <RoomPage /> }, 
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
   },
 
   {
-    element: <ProtectedRoute allowedRoles={['admin']} redirectPath="/" />, 
+    element: <ProtectedRoute allowedRoles={['ADMIN']} redirectPath="/" />, 
     children: [
       { path: "admin", element: <AdminPage /> },
     ],
