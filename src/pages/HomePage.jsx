@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MovieGrid from "../components/MovieGrid";
 import MainLayout from "../layouts/Layout";
-import { fetchMovies } from "../api/api";
+// import { fetchMovies } from "../api/api";
 import useUserStore from "../stores/Store";
 
 export default function HomePage() {
@@ -9,25 +9,29 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showFilter, setShowFilter] = useState(false);
   const isDarkMode = useUserStore(state => state.isDarkMode);
+  const getMovies = useUserStore(state => state.getMovies);
 
   const categories = [
     { id: "all", label: "All Movies" },
-    { id: "action", label: "Action" },
-    { id: "comedy", label: "Comedy" },
-    { id: "drama", label: "Drama" },
-    { id: "horror", label: "Horror" },
-    { id: "scifi", label: "Sci-Fi" },
-    { id: "romance", label: "Romance" },
-    { id: "thriller", label: "Thriller" },
+    { id: 1, label: "Action" },
+    { id: 2, label: "Comedy" },
+    { id:3, label: "Drama" },
+    { id: 4, label: "Horror" },
+    { id: 5, label: "Sci-Fi" },
+    { id: 6, label: "Romance" },
+    { id: 7, label: "Thriller" },
   ];
 
   useEffect(() => {
-    fetchMovies().then(setMovies).catch(console.error);
+    // fetchMovies().then(setMovies).catch(console.error);
+    getMovies().then(setMovies).catch(console.error);
+
   }, []);
   
-  console.log('movies', movies)
-  const filteredMovies = selectedCategory === "all" ? movies : movies.filter(movie => movie.category === selectedCategory);
-  console.log("filteredMovies",filteredMovies)
+
+
+  const filteredMovies = selectedCategory === "all" ? movies : movies.filter(movie => movie.categoryId === selectedCategory);
+ 
 
   return (
     <MainLayout>

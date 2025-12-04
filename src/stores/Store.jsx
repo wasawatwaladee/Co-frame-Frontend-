@@ -6,6 +6,28 @@ const useUserStore = create (persist((set,get)=> ({
     user : null,
     token: '',
     isDarkMode: true, //Kay
+    movies:[],
+    categories:[],
+    getMovies: async() => {
+        try {
+            const resp = await authApi.get('/movies')
+            set({movies:resp.data})
+            return resp.data
+        } catch (error) {
+            console.log('Error fetching movies:', error)
+            throw error
+        }
+    },
+    getCategories:async()=>{
+        try {
+            const resp = await authApi.get('/api/categories')
+            set({categories:resp.data})
+            return resp.data
+        } catch (error) {
+            console.log('Error fetching movies:', error)
+            throw error
+        }
+    },
     login: async(input) => {
       const resp = await authApi.post('/api/auth/login',input)
       console.log('resp', resp)
