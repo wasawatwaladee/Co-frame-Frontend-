@@ -4,41 +4,139 @@ import VideoPlayer from "../components/VideoPlayer";
 import Chat from "../components/Chat";
 import useUserStore from "../stores/Store";
 import { socket } from "../socket";
-import  authApi  from "../api/api";
+import authApi from "../api/api";
 
 // คอมโพเนนต์ Modal สำหรับกรอกรหัสผ่าน
 const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoom }) => {
+    const [showPassword, setShowPassword] = useState(false);
+    
     return (
-        <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-xl w-80 text-black shadow-xl">
-                <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
-                    Join Watch Party
-                </h2>
-                <p className="text-sm text-center text-gray-500 mb-4">
-                    โปรดกรอกรหัสผ่านเพื่อเข้าห้อง
-                </p>
-                
-                <input
-                    type="password"
-                    placeholder="Room Password"
-                    value={roomPassword}
-                    onChange={(e) => setRoomPassword(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleJoinRoom(roomPassword)}
-                    className="w-full px-4 py-2 rounded-lg border mb-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                
-                {joinError && (
-                    <p className="text-red-500 text-sm mb-3">{joinError}</p>
-                )}
+        <div className="fixed inset-0 z-50 flex items-center justify-center perspective-1000 animate-fade-in">
+            {/* Blurred Background with Cinema Overlay */}
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-xl transition-opacity duration-500"></div>
+            
+            {/* Modal Content */}
+            <div className="relative bg-white text-zinc-900 rounded-3xl w-full max-w-sm mx-4 shadow-2xl shadow-black/80 border border-zinc-200 animate-cinema-enter overflow-hidden">
+                {/* Cinema Light Effect */}
+                <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-1 blur-[100px] rounded-full transition-all duration-300 ${
+                    roomPassword.length > 3 ? 'bg-green-500/50' : 'bg-red-500/50'
+                }`}></div>
 
-                <button
-                    onClick={() => handleJoinRoom(roomPassword)}
-                    className="w-full bg-purple-600 text-white py-2 rounded-lg font-semibold"
-                >
-                    Join Room
-                </button>
+                {/* Header */}
+                <div className="relative px-6 py-5 text-center border-b border-zinc-200 bg-zinc-50">
+                    <h2 className="text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-600 bg-clip-text text-transparent uppercase drop-shadow-sm">
+                        Enter Access Code
+                    </h2>
+                    <p className="text-zinc-600 text-xs mt-1.5 font-medium tracking-wide">
+                        Verify your party password
+                    </p>
+                </div>
 
-               
+                {/* Content */}
+                <div className="py-8 px-6">
+                    {/* Password Input */}
+                    <div className="mb-5">
+                        <label className="block text-xs font-semibold text-zinc-700 mb-2 uppercase tracking-wide">Party Password</label>
+                        <div className="relative flex items-center">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Enter password"
+                                value={roomPassword}
+                                onChange={(e) => setRoomPassword(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleJoinRoom(roomPassword)}
+                                className={`flex-1 px-3 py-2 rounded-lg bg-zinc-50 border-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 transition-all ${
+                                    roomPassword.length > 3 
+                                        ? 'border-green-500/50 focus:ring-green-500/50 focus:border-green-500' 
+                                        : 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500'
+                                }`}
+                            />
+                            {/* Toggle Password Visibility Button */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className={`absolute right-2 p-1 rounded-lg transition-colors cursor-pointer ${
+                                    roomPassword.length > 3
+                                        ? 'text-zinc-600 hover:text-green-600 hover:bg-green-100'
+                                        : 'text-zinc-600 hover:text-red-600 hover:bg-red-100'
+                                }`}
+                                title={showPassword ? "Hide password" : "Show password"}
+                            >
+                                {showPassword ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-4.803m5.596-3.856a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+                        
+                        {/* Password Character Count Indicator */}
+                        {roomPassword && (
+                            <div className="mt-2 flex items-center gap-2">
+                                <div className="flex-1 h-1 bg-zinc-300 rounded-full overflow-hidden">
+                                    <div 
+                                        className={`h-full transition-all duration-300 ${
+                                            roomPassword.length > 3 
+                                                ? 'bg-gradient-to-r from-green-500 to-green-600' 
+                                                : 'bg-gradient-to-r from-red-500 to-red-600'
+                                        }`}
+                                        style={{ width: `${Math.min((roomPassword.length / 20) * 100, 100)}%` }}
+                                    ></div>
+                                </div>
+                                <span className={`text-xs font-semibold whitespace-nowrap ${
+                                    roomPassword.length > 3 
+                                        ? 'text-green-600' 
+                                        : 'text-red-600'
+                                }`}>
+                                    {roomPassword.length} {roomPassword.length === 1 ? 'character' : 'characters'}
+                                </span>
+                            </div>
+                        )}
+                        
+                        <p className="text-xs text-zinc-500 mt-1.5 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Your password is secure and encrypted
+                        </p>
+                    </div>
+                    
+                    {/* Error Message */}
+                    {joinError && (
+                        <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-lg overflow-hidden">
+                            <div className="flex items-start gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-red-600 shrink-0 mt-0.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p className="text-red-700 text-xs font-semibold tracking-wide">{joinError}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Enter Button */}
+                    <button
+                        onClick={() => handleJoinRoom(roomPassword)}
+                        className={`w-full group relative overflow-hidden text-white py-2 rounded-lg font-bold text-sm uppercase tracking-wide transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed ${
+                            roomPassword.length > 3
+                                ? 'bg-gradient-to-r from-green-600 to-green-700 hover:shadow-[0_0_25px_rgba(34,197,94,0.3)]'
+                                : 'bg-gradient-to-r from-red-600 to-red-700 hover:shadow-[0_0_25px_rgba(220,38,38,0.3)]'
+                        }`}
+                        disabled={!roomPassword}
+                    >
+                        <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                            roomPassword.length > 3
+                                ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-400'
+                                : 'bg-gradient-to-r from-red-400 via-red-500 to-red-400'
+                        }`}></div>
+                        <span className="relative z-10 flex items-center justify-center gap-2 cursor-pointer">
+                            <span>Enter Room</span>
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     );
