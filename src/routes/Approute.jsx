@@ -20,12 +20,15 @@ const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
   { path: "*", element: <Navigate to="/" /> },
   { path: "community", element: <CommunityPage /> },
+  { path: "room/:movieId/:roomToken?", element: <RoomPage /> }, 
 
   {
     element: <ProtectedRoute allowedRoles={['guest']} redirectPath="/" />,
     children: [
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
+      
+      
     ]
   },
 
@@ -34,7 +37,7 @@ const router = createBrowserRouter([
     children: [
       { path: "profile", element: <ProfilePage /> }, // Kay
       { path: "profile/:username", element: <ProfilePage /> },
-      { path: "room/:movieId/:roomToken?", element: <RoomPage /> }, 
+    
     ],
   },
 

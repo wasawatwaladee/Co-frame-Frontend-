@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import useUserStore from "../stores/Store";
+import { toast } from "react-toastify";
 
 function PostForm({ onPostCreated }) {
   const [title, setTitle] = useState("");
@@ -33,7 +34,7 @@ function PostForm({ onPostCreated }) {
 
     // Validation เบื้องต้น
     if (!title.trim() || !content.trim() || !categoryId) {
-      return alert("กรุณากรอกหัวข้อ เนื้อหา และเลือกหมวดหมู่");
+      return toast.warn("กรุณากรอกหัวข้อ เนื้อหา และเลือกหมวดหมู่");
     }
 
     try {
@@ -61,9 +62,9 @@ function PostForm({ onPostCreated }) {
         onPostCreated(response.data.result);
       }
 
-      alert("สร้างโพสต์สำเร็จ!");
+      toast.success("สร้างโพสต์สำเร็จ!");
     } catch (error) {
-      alert(error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างโพสต์");
+      toast.error(error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างโพสต์");
     } finally {
       setLoading(false);
     }

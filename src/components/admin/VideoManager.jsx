@@ -1,52 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // Import Modals ทั้ง 3 ตัว (ตรวจสอบ path ให้ตรงกับโฟลเดอร์ของคุณนะครับ)
 import VideoModal from "../admin/modal/VideoModal";
 import EditVideoModal from "../admin/modal/EditVideoModal";
 import DeleteVideoModal from "../admin/modal/DeleteVideoModal";
+import useUserStore from "../../stores/Store";
+import  authApi  from "../../api/api";
 
-// Mock Data (เหมือนเดิม)
-const mockVideos = [
-  {
-    id: 1,
-    title: "The Crown Season 5",
-    desc: "เรื่องราวของราชวงศ์อังกฤษ",
-    tag: "ดราม่า",
-    duration: "52:30",
-    date: "2024-11-01",
-    thumbnail:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 2,
-    title: "Stranger Things",
-    desc: "เรื่องราวลึกลับในเมืองเล็กๆ",
-    tag: "ไซไฟ",
-    duration: "45:20",
-    date: "2024-11-05",
-    thumbnail:
-      "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=500&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 3,
-    title: "Money Heist",
-    desc: "แผนปล้นที่ยิ่งใหญ่ที่สุด",
-    tag: "แอคชั่น",
-    duration: "48:15",
-    date: "2024-11-10",
-    thumbnail:
-      "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 4,
-    title: "Bridgerton",
-    desc: "ความรักในยุครีเจนซี่",
-    tag: "โรแมนติก",
-    duration: "55:40",
-    date: "2024-11-15",
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60",
-  },
-];
+
+
 
 export default function VideoManager() {
   // --- State Management ---
@@ -55,6 +16,26 @@ export default function VideoManager() {
   // ใช้ selectedVideo เพื่อส่งข้อมูลหนังที่เลือกไปยัง Modal (Edit/Delete)
   const [selectedVideo, setSelectedVideo] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState('');
+
+
+  const movies = useUserStore((state) => state.movies);
+  const categories = useUserStore((state) => state.categories);
+const getMovies = useUserStore((state) => state.getMovies);
+const getCategories = useUserStore((state) => state.getCategories);
+
+
+useEffect(()=>{
+ 
+  
+  getMovies();
+  
+  getCategories()
+},[])
+
+console.log('movies from Manager', movies )
+console.log('categories from Manager', categories )
+// console.log('MovieList', moviesList )
   // --- Handlers ---
   const handleOpenAdd = () => {
     setSelectedVideo(null);
@@ -76,6 +57,32 @@ export default function VideoManager() {
     setSelectedVideo(null);
   };
 
+  const handleSubmitVideo = async (id, data, isEditMode) => {
+    try {
+        if (isEditMode) {
+            // 1. โหมดแก้ไข (Update)
+            await authApi.put(`/movies/${id}`, data); 
+            console.log("Video Updated:", id);
+        } else {
+          console.log('data', data)
+            // 2. โหมดเพิ่ม (Add)
+            await authApi.post('/movies', data);
+            console.log("Video Added:", data.title);
+        }
+        
+        // หลังจากเสร็จสิ้น: ปิด Modal และโหลดรายการหนังใหม่
+        getMovies();
+        handleClose();
+        
+    } catch (error) {
+        console.error("Submit Error:", error.response?.data || error.message);
+    }
+  };
+
+  const filteredMovies = movies.filter(movie => 
+    movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       {/* Header Actions */}
@@ -88,6 +95,8 @@ export default function VideoManager() {
             <input
               type="text"
               placeholder="ค้นหาวิดีโอ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-[#1a1a1a] border border-white/10 text-white px-4 py-2.5 pl-10 rounded-lg focus:outline-none focus:border-primary transition-colors"
             />
             <svg
@@ -132,7 +141,7 @@ export default function VideoManager() {
 
       {/* Video List */}
       <div className="space-y-4">
-        {mockVideos.map((video) => (
+        {filteredMovies.map((video) => (
           <div
             key={video.id}
             className="bg-[#1a1a1a] p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center group hover:bg-[#252525] transition-colors border border-transparent hover:border-white/5"
@@ -151,15 +160,17 @@ export default function VideoManager() {
               <h3 className="text-lg font-bold text-white mb-1">
                 {video.title}
               </h3>
-              <p className="text-textSecondary text-sm mb-2">{video.desc}</p>
+              <p className="text-textSecondary text-sm mb-2">{video.description}</p>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs text-textMuted">
-                <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-textSecondary">
-                  {video.tag}
-                </span>
+               {video.category && (
+                    <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-textSecondary">
+                      {video.category.name} 
+                    </span>
+                )}
+                {/* <span>•</span> */}
+                {/* <span>{video.duration}</span> */}
                 <span>•</span>
-                <span>{video.duration}</span>
-                <span>•</span>
-                <span>{video.date}</span>
+                <span>{video.createdAt ? new Date(video.createdAt).toLocaleDateString() : 'N/A'}</span>
               </div>
             </div>
 
@@ -190,7 +201,7 @@ export default function VideoManager() {
               {/* ปุ่มลบ -> เปิด Modal Delete */}
               <button
                 onClick={() => handleOpenDelete(video)}
-                className="p-2 text-textSecondary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                className="p-2 rounded-lg transition-colors bg-[#252525] text-textMuted hover:text-red-500 hover:bg-red-500/10"
                 title="ลบ"
               >
                 <svg
@@ -216,13 +227,14 @@ export default function VideoManager() {
       {/* --- RENDER MODALS --- */}
 
       {/* 1. Modal เพิ่มวิดีโอ (VideoModal) */}
-      <VideoModal isOpen={modalType === "add"} onClose={handleClose} />
+      <VideoModal isOpen={modalType === "add"} onClose={handleClose} videoData={selectedVideo} categories={categories} onSubmit={handleSubmitVideo}/>
 
       {/* 2. Modal แก้ไขวิดีโอ (EditVideoModal) */}
       <EditVideoModal
         isOpen={modalType === "edit"}
         onClose={handleClose}
         videoData={selectedVideo} // ส่งข้อมูลหนังไปให้ Form
+        onSubmit={handleSubmitVideo}
       />
 
       {/* 3. Modal ลบวิดีโอ (DeleteVideoModal) */}
@@ -230,6 +242,7 @@ export default function VideoManager() {
         isOpen={modalType === "delete"}
         onClose={handleClose}
         videoData={selectedVideo} // ส่งข้อมูลหนังไปเพื่อแสดงชื่อหนังที่จะลบ
+        getMovies={getMovies}
       />
     </div>
   );
