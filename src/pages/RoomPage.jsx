@@ -54,7 +54,7 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className={`absolute right-2 p-1 rounded-lg transition-colors ${
+                                className={`absolute right-2 p-1 rounded-lg transition-colors cursor-pointer ${
                                     roomPassword.length > 3
                                         ? 'text-zinc-600 hover:text-green-600 hover:bg-green-100'
                                         : 'text-zinc-600 hover:text-red-600 hover:bg-red-100'
@@ -132,7 +132,7 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                                 ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-400'
                                 : 'bg-gradient-to-r from-red-400 via-red-500 to-red-400'
                         }`}></div>
-                        <span className="relative z-10 flex items-center justify-center gap-2">
+                        <span className="relative z-10 flex items-center justify-center gap-2 cursor-pointer">
                             <span>Enter Room</span>
                         </span>
                     </button>
