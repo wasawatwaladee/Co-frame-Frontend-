@@ -4,6 +4,7 @@ import PostForm from "./PostForm";
 import useUserStore from "../stores/Store";
 import axios from "axios";
 
+// Modal Component (ไม่มีการเปลี่ยนแปลง CSS ที่สำคัญ)
 const Modal = ({ children, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-100">
@@ -20,53 +21,77 @@ const Modal = ({ children, onClose }) => {
   );
 };
 
+// ⭐️ คอมโพเนนต์ที่ถูกจัด CSS ใหม่
 const PostDisplay = ({ post, onDelete }) => (
   <div
     key={post.id}
-    className="bg-gray-300 shadow-md rounded-xl p-4 border border-gray-200 relative"
+    // ⭐️ ปรับพื้นหลังและเงาให้ดูคล้ายการ์ดโพสต์สมัยใหม่
+    className="bg-gray-900 shadow-lg rounded-xl p-4 border border-gray-700 relative text-white"
   >
-    <div className="flex items-center mb-3">
-      {/* (Optional) ใส่รูปโปรไฟล์ถ้ามี */}
-      {/* <img src={post.user?.picture} className="w-10 h-10 rounded-full mr-2"/> */}
+    {/* 1. Header และ User Info */}
+    <div className="flex items-start justify-between mb-3">
+        
+      <div className="flex items-center">
+        {/* (Optional) ใส่รูปโปรไฟล์ถ้ามี */}
+        {/* <img src={post.user?.picture} className="w-10 h-10 rounded-full mr-2"/> */}
+        
+        <div>
+            {/* ชื่อผู้ใช้ */}
+            <p className="font-semibold text-white hover:text-blue-400 cursor-pointer">
+              {post.user?.username || "Unknown User"}
+            </p>
 
-      <div>
-        {/* ✅ แก้จุดที่ 1: ต้องเข้าถึง username ข้างใน post.user */}
-        {/* ใช้ ?. (Optional Chaining) กัน error กรณีข้อมูล user ไม่มา */}
-        <p className="font-semibold text-gray-800">
-          {post.user?.username || "Unknown User"}
-        </p>
-
-        {/* ✅ แก้จุดที่ 2: ใช้ post.createdAt หรือ timestamp จาก DB */}
-        <p className="text-sm text-gray-500">
-          {new Date(post.createdAt || post.timestamp).toLocaleString()}
-        </p>
+            {/* เวลาโพสต์ */}
+            <p className="text-xs text-gray-400">
+              {new Date(post.createdAt || post.timestamp).toLocaleString()}
+            </p>
+        </div>
       </div>
+     
+    
 
+      {/* ปุ่มลบ (อยู่ขวาบน) */}
       <button
         onClick={() => onDelete(post.id)}
-        className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-xl font-bold p-1 transition duration-150"
+        className="text-gray-500 hover:text-red-500 text-xl font-bold p-1 transition duration-150"
       >
         X
       </button>
     </div>
-    {/* ✅ แก้จุดที่ 3: ใช้ post.content ให้ตรงกับ Schema Database */}
-    <h4 className="font-bold text-lg mb-1">{post.title}</h4>{" "}
-    {/* เพิ่ม Title ถ้ามี */}
-    <p className="text-gray-700 whitespace-pre-wrap">{post.content}</p>
+    
+    {/* 2. เนื้อหา (Title และ Content) */}
+    <div className="mb-3">
+        <h4 className="font-bold text-lg mb-1">{post.title}</h4>
+        {/* whitespace-pre-wrap สำคัญเพื่อให้รองรับการขึ้นบรรทัดใหม่ในข้อความ */}
+        <p className="text-gray-300 whitespace-pre-wrap">{post.content}</p>
+    </div>
+
+
+    {/* 3. รูปภาพ/Thumbnail */}
+    { post.thumbnail && (
+     <div className="mt-3">
+       {/* ⭐️ ปรับขนาดรูป: Max-width เต็ม PostContainer, Max-height จำกัดไว้, object-cover เพื่อให้รูปไม่ยืด */}
+       <img 
+            src={post.thumbnail} 
+            alt="thumbnail" 
+            className="w-full h-96 object-cover rounded-lg border border-gray-700" 
+            loading="lazy"
+        />
+     </div>
+    )}
   </div>
 );
 
 function PostContainer({ categoryId }) {
   const [posts, setPosts] = useState([]);
   const token = useUserStore((state) => state.token);
-  const [loading, setLoading] = useState(false); // เพิ่ม loading state ให้ดูดีขึ้น
+  const [loading, setLoading] = useState(false); 
 
-  // ✅ 2. ปรับ URL ให้รองรับการกรองหมวดหมู่
+  console.log('categoryId from PostContainer', categoryId)
   const fetchPosts = async () => {
     try {
       setLoading(true);
 
-      // ถ้ามี categoryId ให้ต่อท้าย URL
       let url = "http://localhost:5500/api/post";
       if (categoryId) {
         url += `?categoryId=${categoryId}`;
@@ -81,16 +106,15 @@ function PostContainer({ categoryId }) {
     }
   };
 
-  // ✅ 3. ใส่ categoryId ใน Dependency Array
-  // (แปลว่า: ถ้า categoryId เปลี่ยน ให้รัน fetchPosts ใหม่ทันที)
   useEffect(() => {
     fetchPosts();
   }, [categoryId]);
 
+  console.log('posts from PostContainer', posts)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
+  
   const handlePostCreated = () => {
     fetchPosts();
     closeModal();
@@ -110,11 +134,10 @@ function PostContainer({ categoryId }) {
   };
 
   return (
-    <div className=" w-[680px] mx-auto min-h-screen flex flex-col gap-4 rounded-lg bg-transparent ">
+    <div className="w-[680px] mx-auto min-h-screen gap-4 rounded-lg bg-transparent">
       <CreatePost onOpenForm={openModal} />
 
-      <h3 className=" text-xl font-bold text-white mt-4">
-        {/* แสดงชื่อหมวดหมู่ด้วยก็ได้ (ถ้าอยากทำเพิ่ม) */}
+      <h3 className="text-xl font-bold text-white mt-4 mb-4 border-b border-gray-700 pb-2">
         รายการโพสต์ {categoryId ? "(กรองตามหมวดหมู่)" : "(ทั้งหมด)"}
       </h3>
 
@@ -136,11 +159,13 @@ function PostContainer({ categoryId }) {
         )}
       </div>
 
+     
       {isModalOpen && (
         <Modal onClose={closeModal}>
-          <PostForm onPostCreated={handlePostCreated} />
+          <PostForm  onPostCreated={handlePostCreated} />
         </Modal>
       )}
+
     </div>
   );
 }

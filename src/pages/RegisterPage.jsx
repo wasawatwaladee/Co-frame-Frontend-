@@ -7,7 +7,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
-import { authApi } from "../api/api";
+import  authApi  from "../api/api";
 import useUserStore from "../stores/Store";
 
 export default function RegisterPage() {

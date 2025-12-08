@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import VideoPlayer from "../components/VideoPlayer";
 import Chat from "../components/Chat";
-import { siteConfig } from "../constant/config";
 import useUserStore from "../stores/Store";
 import { socket } from "../socket";
+import  authApi  from "../api/api";
 
 // คอมโพเนนต์ Modal สำหรับกรอกรหัสผ่าน
 const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoom }) => {
@@ -68,16 +68,19 @@ export default function RoomPage() {
 
   // ⭐️ 2. useEffect สำหรับ Fetch Movie Data (ต้องมาก่อน Logic อื่น)
   useEffect(() => {
-    if (!movieId) return;
+  if (!movieId) return;
 
-    fetch(`${siteConfig.SERVER_URL}/movies/${movieId}`)
-      .then((r) => r.json())
-      .then(setMovie)
+    // ⭐️⭐️ เปลี่ยนจากการใช้ fetch ไปใช้ authApi.get() ⭐️⭐️
+    authApi.get(`/movies/${movieId}`) 
+      .then((resp) => {
+        console.log('resp', resp)
+        // เมื่อใช้ authApi/axios, response data อยู่ใน r.data แล้ว
+        setMovie(resp.data);
+      })
       .catch(console.error);
 
   }, [movieId]);
-  console.log('movie from roompage', movie)
-  console.log('movieId', movieId)
+
 
   // ⭐️ 3. ฟังก์ชันหลักในการส่งคำขอเข้าร่วมห้องไปยัง Socket Server
   const handleJoinRoom = (password) => {

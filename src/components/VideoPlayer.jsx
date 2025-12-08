@@ -5,7 +5,7 @@ import { socket } from "../socket";
 // import useUserStore from "../stores/Store"; 
 
 export default function VideoPlayer({ roomId, movie, isWatchParty, user }) { // เพิ่ม isWatchParty และ user ใน props
-  console.log('user from VideoPlayer', user)
+
   const videoRef = useRef(null);
   const [status, setStatus] = useState({ playing: false, time: 0 });
   const [info, setInfo] = useState("Not synced yet");

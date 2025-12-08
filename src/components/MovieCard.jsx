@@ -2,9 +2,11 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useUserStore from "../stores/Store";
 
 const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [code, setCode] = useState("")
@@ -60,7 +62,7 @@ const MovieCard = ({ movie }) => {
        </button>
     </div>
     {/* Modal */}
-    {isModalOpen && (
+    {(isModalOpen && user) && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl w-80 text-black shadow-xl">
 

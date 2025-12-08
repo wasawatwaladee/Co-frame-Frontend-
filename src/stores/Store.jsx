@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { authApi } from "../api/api";
+import  authApi  from "../api/api";
 import axios from "axios";
 
 const useUserStore = create(persist((set, get) => ({
@@ -8,7 +8,17 @@ const useUserStore = create(persist((set, get) => ({
     token: '',
     isDarkMode: true, //Kay
     movies:[],
-    categories:[],
+    categories:[],  
+//    fetchUsers:async ()=>{
+//          try {
+//       const resp = await authApi.get('/api/auth/users')
+//       console.log('res.data', resp.data)
+//       return resp.data.users
+      
+//     } catch (err) {
+//       console.log(err)
+//     }
+//     } ,
 
     setUser: (user) => set({ user: user }),
 
@@ -23,6 +33,7 @@ const useUserStore = create(persist((set, get) => ({
     getMovies: async() => {
         try {
             const resp = await authApi.get('/movies')
+            console.log('resp.data getMovies', resp.data)
             set({movies:resp.data})
             return resp.data
         } catch (error) {
@@ -34,6 +45,8 @@ const useUserStore = create(persist((set, get) => ({
         try {
             const resp = await authApi.get('/api/categories')
             set({categories:resp.data})
+            console.log('resp.data getCategories', resp.data)
+
             return resp.data
         } catch (error) {
             console.log('Error fetching movies:', error)

@@ -1,5 +1,22 @@
-export default function DeleteVideoModal({ isOpen, onClose, videoData }) {
+import  authApi  from "../../../api/api";
+
+
+export default function DeleteVideoModal({ isOpen, onClose, videoData , getMovies}) {
   if (!isOpen) return null;
+ 
+
+  const handleDelete = async () => {
+    try {
+      // เรียก API เพื่อลบวิดีโอ
+      await authApi.delete(`/movies/${videoData.id}`);
+      console.log("Video Deleted:", videoData.id);
+      await getMovies(); // ดึงข้อมูลหนังใหม่หลังลบเสร็จ
+      onClose(); // ปิด modal หลังลบสำเร็จ
+    } catch (error) {
+      console.error("Error deleting video:", error);
+      // แสดงข้อความแจ้งเตือนข้อผิดพลาดถ้าจำเป็น
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fade-in">
@@ -41,7 +58,7 @@ export default function DeleteVideoModal({ isOpen, onClose, videoData }) {
           >
             ยกเลิก
           </button>
-          <button className="flex-1 bg-primary hover:bg-red-700 text-white font-bold py-2.5 rounded-lg transition-colors shadow-lg shadow-red-900/20">
+          <button onClick={()=>handleDelete()} className="flex-1 bg-primary hover:bg-red-700 text-white font-bold py-2.5 rounded-lg transition-colors shadow-lg shadow-red-900/20">
             ลบวิดีโอ
           </button>
         </div>
