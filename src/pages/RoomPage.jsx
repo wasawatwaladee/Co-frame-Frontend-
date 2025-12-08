@@ -16,27 +16,27 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl transition-opacity duration-500"></div>
             
             {/* Modal Content */}
-            <div className="relative bg-white text-zinc-900 rounded-3xl w-full max-w-md mx-4 shadow-2xl shadow-black/80 border border-zinc-200 animate-cinema-enter overflow-hidden">
+            <div className="relative bg-white text-zinc-900 rounded-3xl w-full max-w-sm mx-4 shadow-2xl shadow-black/80 border border-zinc-200 animate-cinema-enter overflow-hidden">
                 {/* Cinema Light Effect */}
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-1 blur-[100px] rounded-full transition-all duration-300 ${
                     roomPassword.length > 3 ? 'bg-green-500/50' : 'bg-red-500/50'
                 }`}></div>
 
                 {/* Header */}
-                <div className="relative px-8 py-8 text-center border-b border-zinc-200 bg-zinc-50">
-                    <h2 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-600 bg-clip-text text-transparent uppercase drop-shadow-sm">
+                <div className="relative px-6 py-5 text-center border-b border-zinc-200 bg-zinc-50">
+                    <h2 className="text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-600 bg-clip-text text-transparent uppercase drop-shadow-sm">
                         Enter Access Code
                     </h2>
-                    <p className="text-zinc-600 text-sm mt-2 font-medium tracking-wide">
+                    <p className="text-zinc-600 text-xs mt-1.5 font-medium tracking-wide">
                         Verify your party password
                     </p>
                 </div>
 
                 {/* Content */}
-                <div className="p-8">
+                <div className="py-8 px-6">
                     {/* Password Input */}
-                    <div className="mb-6">
-                        <label className="block text-sm font-semibold text-zinc-700 mb-3 uppercase tracking-wide">Party Password</label>
+                    <div className="mb-5">
+                        <label className="block text-xs font-semibold text-zinc-700 mb-2 uppercase tracking-wide">Party Password</label>
                         <div className="relative flex items-center">
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -44,7 +44,7 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                                 value={roomPassword}
                                 onChange={(e) => setRoomPassword(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleJoinRoom(roomPassword)}
-                                className={`flex-1 px-4 py-3 rounded-xl bg-zinc-50 border-2 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 transition-all ${
+                                className={`flex-1 px-3 py-2 rounded-lg bg-zinc-50 border-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 transition-all ${
                                     roomPassword.length > 3 
                                         ? 'border-green-500/50 focus:ring-green-500/50 focus:border-green-500' 
                                         : 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500'
@@ -54,7 +54,7 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className={`absolute right-3 p-2 rounded-lg transition-colors ${
+                                className={`absolute right-2 p-1 rounded-lg transition-colors ${
                                     roomPassword.length > 3
                                         ? 'text-zinc-600 hover:text-green-600 hover:bg-green-100'
                                         : 'text-zinc-600 hover:text-red-600 hover:bg-red-100'
@@ -62,11 +62,11 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                                 title={showPassword ? "Hide password" : "Show password"}
                             >
                                 {showPassword ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-4.803m5.596-3.856a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
@@ -76,8 +76,8 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                         
                         {/* Password Character Count Indicator */}
                         {roomPassword && (
-                            <div className="mt-3 flex items-center gap-2">
-                                <div className="flex-1 h-1.5 bg-zinc-300 rounded-full overflow-hidden">
+                            <div className="mt-2 flex items-center gap-2">
+                                <div className="flex-1 h-1 bg-zinc-300 rounded-full overflow-hidden">
                                     <div 
                                         className={`h-full transition-all duration-300 ${
                                             roomPassword.length > 3 
@@ -97,7 +97,7 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                             </div>
                         )}
                         
-                        <p className="text-xs text-zinc-500 mt-2 flex items-center gap-1">
+                        <p className="text-xs text-zinc-500 mt-1.5 flex items-center gap-1">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
@@ -107,12 +107,12 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                     
                     {/* Error Message */}
                     {joinError && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl overflow-hidden">
-                            <div className="flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-red-600 shrink-0 mt-0.5">
+                        <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-lg overflow-hidden">
+                            <div className="flex items-start gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-red-600 shrink-0 mt-0.5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <p className="text-red-700 text-sm font-semibold tracking-wide">{joinError}</p>
+                                <p className="text-red-700 text-xs font-semibold tracking-wide">{joinError}</p>
                             </div>
                         </div>
                     )}
@@ -120,7 +120,7 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                     {/* Enter Button */}
                     <button
                         onClick={() => handleJoinRoom(roomPassword)}
-                        className={`w-full group relative overflow-hidden text-white py-3 rounded-xl font-bold uppercase tracking-wide transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed ${
+                        className={`w-full group relative overflow-hidden text-white py-2 rounded-lg font-bold text-sm uppercase tracking-wide transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed ${
                             roomPassword.length > 3
                                 ? 'bg-gradient-to-r from-green-600 to-green-700 hover:shadow-[0_0_25px_rgba(34,197,94,0.3)]'
                                 : 'bg-gradient-to-r from-red-600 to-red-700 hover:shadow-[0_0_25px_rgba(220,38,38,0.3)]'
@@ -134,9 +134,6 @@ const PasswordModal = ({ joinError, roomPassword, setRoomPassword, handleJoinRoo
                         }`}></div>
                         <span className="relative z-10 flex items-center justify-center gap-2">
                             <span>Enter Room</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
                         </span>
                     </button>
                 </div>
