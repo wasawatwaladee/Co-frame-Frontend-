@@ -4,7 +4,6 @@ import PostForm from "./PostForm";
 import useUserStore from "../stores/Store";
 import axios from "axios";
 
-// Modal Component (ไม่มีการเปลี่ยนแปลง CSS ที่สำคัญ)
 const Modal = ({ children, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-100">
@@ -21,85 +20,337 @@ const Modal = ({ children, onClose }) => {
   );
 };
 
-// ⭐️ คอมโพเนนต์ที่ถูกจัด CSS ใหม่
-const PostDisplay = ({ post, onDelete }) => (
-  <div
-    key={post.id}
-    // ⭐️ ปรับพื้นหลังและเงาให้ดูคล้ายการ์ดโพสต์สมัยใหม่
-    className="bg-gray-900 shadow-lg rounded-xl p-4 border border-gray-700 relative text-white"
-  >
-    {/* 1. Header และ User Info */}
-    <div className="flex items-start justify-between mb-3">
-        
-      <div className="flex items-center">
-        {/* (Optional) ใส่รูปโปรไฟล์ถ้ามี */}
-        {/* <img src={post.user?.picture} className="w-10 h-10 rounded-full mr-2"/> */}
-        
-        <div>
-            {/* ชื่อผู้ใช้ */}
+const CommentItem = ({ comment, currentUser, token }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  useEffect(() => {
+    const likes = comment.likes || [];
+    setLikeCount(likes.length);
+
+    const userLiked = likes.find((l) => l.userId === currentUser?.id);
+    setIsLiked(!!userLiked);
+  }, [comment, currentUser]);
+
+  const handleLikeComment = async () => {
+    try {
+      const newIsLiked = !isLiked;
+      setIsLiked(newIsLiked);
+      setLikeCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
+
+      await axios.post(
+        `http://localhost:5500/api/comment/${comment.id}/like`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error("Like comment error:", error);
+      setIsLiked(!isLiked);
+      setLikeCount((prev) => (!isLiked ? prev + 1 : prev - 1));
+    }
+  };
+
+  return (
+    <div className="flex gap-3 items-start">
+      <div className="w-8 h-8 rounded-full bg-gray-700 shrink-0 overflow-hidden">
+        {comment.user?.picture ? (
+          <img
+            src={comment.user.picture}
+            className="w-full h-full object-cover"
+            alt="avatar"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-xs text-gray-300 font-bold">
+            {comment.user?.username?.[0]?.toUpperCase() || "?"}
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col flex-1">
+        <div className="bg-gray-800 rounded-lg p-3 text-sm relative group">
+          <p className="font-bold text-gray-300 mb-1">
+            {comment.user?.username || "Unknown"}
+          </p>
+          <p className="text-gray-400 mb-2">{comment.content}</p>
+
+          <div className="flex items-center justify-end border-t border-gray-700/50 pt-2 mt-1">
+            <button
+              onClick={handleLikeComment}
+              className={`flex items-center gap-1 text-xs font-semibold transition ${
+                isLiked ? "text-red-400" : "text-gray-500 hover:text-red-400"
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill={isLiked ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                />
+              </svg>
+              <span>{likeCount > 0 ? likeCount : ""}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PostDisplay = ({ post, onDelete, currentUser, token }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
+
+  useEffect(() => {
+    if (post.likes) {
+      setLikeCount(post.likes.length);
+      const userLiked = post.likes.find(
+        (like) => like.userId === currentUser?.id
+      );
+      setIsLiked(!!userLiked);
+    }
+    if (post.comments) {
+      setComments(post.comments);
+    }
+  }, [post, currentUser]);
+
+  const handleLikePost = async () => {
+    try {
+      const newIsLiked = !isLiked;
+      setIsLiked(newIsLiked);
+      setLikeCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
+
+      await axios.post(
+        `http://localhost:5500/api/post/${post.id}/like`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error("Like Post error:", error);
+      setIsLiked(!isLiked);
+      setLikeCount((prev) => (!isLiked ? prev + 1 : prev - 1));
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    try {
+      setCommentLoading(true);
+      const res = await axios.post(
+        "http://localhost:5500/api/comment/",
+        {
+          content: commentText,
+          postId: post.id,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const newComment = res.data.result;
+      const commentWithUser = {
+        ...newComment,
+        user: {
+          id: currentUser.id,
+          username: currentUser.username || "Me",
+          picture: currentUser.picture,
+        },
+        likes: [],
+      };
+
+      setComments([...comments, commentWithUser]);
+      setCommentText("");
+    } catch (error) {
+      console.error("Comment error:", error);
+      alert("คอมเมนต์ไม่สำเร็จ");
+    } finally {
+      setCommentLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-gray-900 shadow-lg rounded-xl p-4 border border-gray-700 relative text-white mb-4">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden shrink-0">
+            {post.user?.picture ? (
+              <img
+                src={post.user.picture}
+                alt="avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-lg">
+                {post.user?.username?.[0]?.toUpperCase() || "?"}
+              </div>
+            )}
+          </div>
+          <div>
             <p className="font-semibold text-white hover:text-blue-400 cursor-pointer">
               {post.user?.username || "Unknown User"}
             </p>
-
-            {/* เวลาโพสต์ */}
             <p className="text-xs text-gray-400">
               {new Date(post.createdAt || post.timestamp).toLocaleString()}
             </p>
+          </div>
         </div>
+
+        {currentUser?.id === post.userId && (
+          <button
+            onClick={() => onDelete(post.id)}
+            className="text-gray-500 hover:text-red-500 text-lg p-1 transition"
+          >
+            ✕
+          </button>
+        )}
       </div>
-     
-    
 
-      {/* ปุ่มลบ (อยู่ขวาบน) */}
-      <button
-        onClick={() => onDelete(post.id)}
-        className="text-gray-500 hover:text-red-500 text-xl font-bold p-1 transition duration-150"
-      >
-        X
-      </button>
-    </div>
-    
-    {/* 2. เนื้อหา (Title และ Content) */}
-    <div className="mb-3">
-        <h4 className="font-bold text-lg mb-1">{post.content}</h4>
-        {/* whitespace-pre-wrap สำคัญเพื่อให้รองรับการขึ้นบรรทัดใหม่ในข้อความ */}
-        {/* <p className="text-gray-300 whitespace-pre-wrap">{post.content}</p> */}
-    </div>
+      {/* Content */}
+      <div className="mb-3">
+        {post.title && <h4 className="font-bold text-lg mb-1">{post.title}</h4>}
+        <p className="text-gray-300 whitespace-pre-wrap">{post.content}</p>
+      </div>
 
-
-    {/* 3. รูปภาพ/Thumbnail */}
-    { post.thumbnail && (
-     <div className="mt-3">
-       {/* ⭐️ ปรับขนาดรูป: Max-width เต็ม PostContainer, Max-height จำกัดไว้, object-cover เพื่อให้รูปไม่ยืด */}
-       <img 
-            src={post.thumbnail} 
-            alt="thumbnail" 
-            className="w-full h-96 object-cover rounded-lg border border-gray-700" 
+      {/* Thumbnail */}
+      {post.thumbnail && (
+        <div className="mt-3 mb-4">
+          <img
+            src={post.thumbnail}
+            alt="thumbnail"
+            className="w-full max-h-96 object-cover rounded-lg border border-gray-700"
             loading="lazy"
-        />
-     </div>
-    )}
-  </div>
-);
+          />
+        </div>
+      )}
 
+      {/* Action Bar */}
+      <div className="flex items-center gap-6 border-t border-gray-800 pt-3 mt-2">
+        <button
+          onClick={handleLikePost}
+          className={`flex items-center gap-2 transition hover:text-red-500 ${
+            isLiked ? "text-red-500" : "text-gray-400"
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill={isLiked ? "currentColor" : "none"}
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+            />
+          </svg>
+          <span>{likeCount} Likes</span>
+        </button>
+
+        <button
+          onClick={() => setShowComments(!showComments)}
+          className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
+            />
+          </svg>
+          <span>{comments.length} Comments</span>
+        </button>
+      </div>
+
+      {/* Comment Section */}
+      {showComments && (
+        <div className="mt-4 pt-4 border-t border-gray-800 animate-fade-in-down">
+          <div className="space-y-3 mb-4 max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-600">
+            {comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <CommentItem
+                  key={comment.id || index}
+                  comment={comment}
+                  currentUser={currentUser}
+                  token={token}
+                />
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm text-center">
+                ยังไม่มีความคิดเห็น เป็นคนแรกสิ!
+              </p>
+            )}
+          </div>
+
+          <form onSubmit={handleCommentSubmit} className="flex gap-2">
+            <input
+              type="text"
+              placeholder="เขียนความคิดเห็น..."
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-full px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500 transition"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              disabled={commentLoading}
+            />
+            <button
+              type="submit"
+              disabled={!commentText.trim() || commentLoading}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ----------------------------------------------------
+// 4. Main PostContainer
+// ----------------------------------------------------
 function PostContainer({ categoryId }) {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const user = useUserStore((state) => state.user);
   const token = useUserStore((state) => state.token);
-  const [loading, setLoading] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  console.log('categoryId from PostContainer', categoryId)
   const fetchPosts = async () => {
     try {
       setLoading(true);
-
       let url = "http://localhost:5500/api/post";
       if (categoryId) {
         url += `?categoryId=${categoryId}`;
       }
-
       const res = await axios.get(url);
       setPosts(res.data.posts);
-      console.log('res.data.posts', res.data.posts)
     } catch (err) {
       console.error("Error fetching posts:", err);
     } finally {
@@ -111,11 +362,9 @@ function PostContainer({ categoryId }) {
     fetchPosts();
   }, [categoryId]);
 
-  console.log('posts from PostContainer', posts)
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  
+
   const handlePostCreated = () => {
     fetchPosts();
     closeModal();
@@ -142,7 +391,7 @@ function PostContainer({ categoryId }) {
         Posts : {categoryId ? `${posts[0]?.category.name}` : "All"}
       </h3>
 
-      <div className="space-y-4">
+      <div className="space-y-4 pb-20">
         {loading ? (
           <p className="text-white text-center">กำลังโหลด...</p>
         ) : posts.length > 0 ? (
@@ -151,6 +400,8 @@ function PostContainer({ categoryId }) {
               key={post.id}
               post={post}
               onDelete={handleDeletePost}
+              currentUser={user}
+              token={token}
             />
           ))
         ) : (
@@ -160,13 +411,11 @@ function PostContainer({ categoryId }) {
         )}
       </div>
 
-     
       {isModalOpen && (
         <Modal onClose={closeModal}>
-          <PostForm  onPostCreated={handlePostCreated} />
+          <PostForm onPostCreated={handlePostCreated} />
         </Modal>
       )}
-
     </div>
   );
 }
