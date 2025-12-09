@@ -323,7 +323,7 @@ export default function UserManager() {
                   className="hover:bg-white/5 transition-colors"
                 >
                   <td className="p-4 font-medium text-white">
-                    {user.firstName || user.email}
+                    {user.username || user.email}
                   </td>
                   <td className="p-4 text-textMuted">{user.email}</td>
                   <td className="p-4 text-textMuted">

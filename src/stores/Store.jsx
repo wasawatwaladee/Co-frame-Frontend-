@@ -7,8 +7,8 @@ const useUserStore = create(persist((set, get) => ({
     user: null,
     token: '',
     isDarkMode: true, //Kay
-    movies:[],
-    categories:[],  
+    movies: [],
+    categories: [],
 //    fetchUsers:async ()=>{
 //          try {
 //       const resp = await authApi.get('/api/auth/users')
@@ -44,8 +44,8 @@ const useUserStore = create(persist((set, get) => ({
     getCategories:async()=>{
         try {
             const resp = await authApi.get('/api/categories')
-            set({categories:resp.data})
-            console.log('resp.data getCategories', resp.data)
+            set({categories:resp.data.categories})
+            console.log('resp.data.categories getCategories', resp.data.categories)
 
             return resp.data
         } catch (error) {
