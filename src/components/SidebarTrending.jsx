@@ -322,7 +322,7 @@ function SidebarTrending({ selectedCategory , onClose}) {
     const [loading, setLoading] = useState(false);
     
     // ชื่อ Header (Logic การหาชื่อเหมือนเดิม)
-    const [displayCategoryName, setDisplayCategoryName] = useState('ALL POSTS (ทั้งหมด)'); 
+    const [displayCategoryName, setDisplayCategoryName] = useState('ALL'); 
     
     
     // 1. Fetch Trending Hashtags (เมื่อ Category เปลี่ยน)
@@ -356,7 +356,7 @@ function SidebarTrending({ selectedCategory , onClose}) {
     useEffect(() => {
         let name;
         if (!selectedCategory) {
-            name = 'ALL POSTS (ทั้งหมด)';
+            name = 'ALL ';
         } else {
             const selectedCat = Array.isArray(categories) 
                 ? categories.find(c => c.id === selectedCategory)
@@ -378,7 +378,7 @@ function SidebarTrending({ selectedCategory , onClose}) {
                 X
             </button>
             <h2 className="text-2xl font-bold border-b border-red-500 pb-2 mb-2 text-red-500">
-                Trending Hashtags: {displayCategoryName} 
+                Trending : {displayCategoryName} 
             </h2>
 
              {loading ? (

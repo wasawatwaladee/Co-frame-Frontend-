@@ -236,7 +236,11 @@ export default function VideoPlayer({ roomId, movie, isWatchParty, user }) { // 
       />
 
       {isWatchParty && (
+        
         <div className="p-4 text-sm text-gray-300">
+          <div className="p-4 text-lg">
+        <h1>{movie.title}</h1>
+      </div>
           <div>
             <strong>Status:</strong> {status.playing ? "Playing" : "Paused"} —
             time: {status.time.toFixed(2)}s
@@ -256,9 +260,7 @@ export default function VideoPlayer({ roomId, movie, isWatchParty, user }) { // 
         </div>
       )}
       
-      <div className="p-4 text-lg">
-        <h1>{movie.title}</h1>
-      </div>
+      
     </div>
   );
 }

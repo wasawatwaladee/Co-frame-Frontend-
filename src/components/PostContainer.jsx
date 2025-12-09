@@ -388,7 +388,7 @@ function PostContainer({ categoryId }) {
       <CreatePost onOpenForm={openModal} />
 
       <h3 className="text-xl font-bold text-white mt-4 mb-4 border-b border-gray-700 pb-2">
-        รายการโพสต์ {categoryId ? "(กรองตามหมวดหมู่)" : "(ทั้งหมด)"}
+        Posts : {categoryId ? `${posts[0]?.category.name}` : "All"}
       </h3>
 
       <div className="space-y-4 pb-20">
