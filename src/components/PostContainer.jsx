@@ -99,6 +99,7 @@ function PostContainer({ categoryId }) {
 
       const res = await axios.get(url);
       setPosts(res.data.posts);
+      console.log('res.data.posts', res.data.posts)
     } catch (err) {
       console.error("Error fetching posts:", err);
     } finally {
