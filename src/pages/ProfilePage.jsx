@@ -125,7 +125,7 @@ export default function ProfilePage() {
           username: formData.username,
           email: formData.email,
           bio: formData.bio,
-          favoriteGenre: formData.favoriteGenre,
+          favoriteGenre: formData.favoriteGenre || "Action",
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -488,7 +488,7 @@ export default function ProfilePage() {
                     </label>
                     <select
                       name="favoriteGenre"
-                      value={formData.favoriteGenre}
+                      value={formData.favoriteGenre || "Action"}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
                         isDarkMode
