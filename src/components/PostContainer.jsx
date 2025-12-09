@@ -61,9 +61,9 @@ const PostDisplay = ({ post, onDelete }) => (
     
     {/* 2. เนื้อหา (Title และ Content) */}
     <div className="mb-3">
-        <h4 className="font-bold text-lg mb-1">{post.title}</h4>
+        <h4 className="font-bold text-lg mb-1">{post.content}</h4>
         {/* whitespace-pre-wrap สำคัญเพื่อให้รองรับการขึ้นบรรทัดใหม่ในข้อความ */}
-        <p className="text-gray-300 whitespace-pre-wrap">{post.content}</p>
+        {/* <p className="text-gray-300 whitespace-pre-wrap">{post.content}</p> */}
     </div>
 
 
@@ -139,7 +139,7 @@ function PostContainer({ categoryId }) {
       <CreatePost onOpenForm={openModal} />
 
       <h3 className="text-xl font-bold text-white mt-4 mb-4 border-b border-gray-700 pb-2">
-        รายการโพสต์ {categoryId ? "(กรองตามหมวดหมู่)" : "(ทั้งหมด)"}
+        Posts : {categoryId ? `${posts[0]?.category.name}` : "All"}
       </h3>
 
       <div className="space-y-4">

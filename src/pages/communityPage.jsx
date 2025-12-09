@@ -46,7 +46,7 @@ const [isSidebarModalOpen, setIsSidebarModalOpen] = useState(true);
         activeId={selectedCategoryId}
       />
 
-      <div className="ml-64 pt-4">
+      <div className="">
         <PostContainer categoryId={selectedCategoryId} />
       </div>
       

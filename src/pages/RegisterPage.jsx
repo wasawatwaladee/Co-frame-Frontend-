@@ -220,13 +220,13 @@ export default function RegisterPage() {
                     } py-2.5 px-4 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary transition-all shadow-input-3d`}
                     {...register("username")}
                   />
-                  {errors.name && (
+                  {errors.username && (
                     <p
                       className={`text-sm mt-1 ${
                         isDarkMode ? "text-primary" : "text-red-600"
                       }`}
                     >
-                      {errors.name.message}
+                      {errors.username.message}
                     </p>
                   )}
                 </div>
