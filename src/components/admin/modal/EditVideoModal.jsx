@@ -289,7 +289,7 @@ export default function EditVideoModal({ isOpen, onClose, videoData, onSubmit, c
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-textSecondary">ระยะเวลา (วินาที)</label>
+              <label className="text-sm font-medium text-textSecondary">ระยะเวลา (นาที)</label>
               <input type="text" name="duration" value={formData.duration} onChange={handleChange} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"/>
             </div>
           </div>
