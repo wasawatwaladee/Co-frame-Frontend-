@@ -968,19 +968,6 @@ function PostContainer({ categoryId, selectedHashtag }) {
       : `Posts : ${categoryName}`
     : `Posts : All`;
 
-  // ⭐️ [UPDATE] Logic การหาชื่อ Category และ Header
-  const categoryName = categoryId
-    ? categories.find((c) => c.id === categoryId)?.name || "Loading..."
-    : "All Posts";
-
-  const displayHeader = selectedHashtag
-    ? `Posts containing: ${selectedHashtag}` // แสดง Hashtag ถ้าถูกเลือก
-    : categoryId
-    ? loading
-      ? `Posts : ${categoryName} (Loading...)`
-      : `Posts : ${categoryName}`
-    : `Posts : All`;
-
   return (
     <div className="w-full max-w-4xl mx-auto min-h-screen gap-4 rounded-lg bg-transparent">
       {/* <h3 className="text-xl font-bold text-white mt-4 mb-4 border-b border-gray-700 pb-2">
