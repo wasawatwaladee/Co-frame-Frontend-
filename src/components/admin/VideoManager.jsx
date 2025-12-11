@@ -167,8 +167,8 @@ console.log('categories from Manager', categories )
                       {video.category.name} 
                     </span>
                 )}
-                {/* <span>•</span> */}
-                {/* <span>{video.duration}</span> */}
+                <span>•</span> 
+               <span>{video.duration} </span> 
                 <span>•</span>
                 <span>{video.createdAt ? new Date(video.createdAt).toLocaleDateString() : 'N/A'}</span>
               </div>

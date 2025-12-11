@@ -61,10 +61,10 @@ function PostForm({ onPostCreated }) {
       if (onPostCreated) {
         onPostCreated(response.data.result);
       }
-
+      
       toast.success("สร้างโพสต์สำเร็จ!");
     } catch (error) {
-      toast.error(error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างโพสต์");
+      toast.error(error.response?.data?.message || "Please Login");
     } finally {
       setLoading(false);
     }

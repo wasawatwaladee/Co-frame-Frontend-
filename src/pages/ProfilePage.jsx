@@ -229,6 +229,7 @@ export default function ProfilePage() {
                       }`}
                     >
                       {profileData.firstName}
+                      {" "}
                       {profileData.lastName}
                     </h1>
                     <p

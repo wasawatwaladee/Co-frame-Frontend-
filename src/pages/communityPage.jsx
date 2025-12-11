@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MainLayout from "../layouts/Layout";
 import SidebarTrending from "../components/SidebarTrending";
 import PostContainer from "../components/PostContainer";
@@ -6,10 +6,10 @@ import SidebarCommunity from "../components/SidebarSteam";
 import useUserStore from "../stores/Store";
 
 const OpenSidebarButton = ({ onClick }) => (
-  // ตำแหน่งปุ่มที่มุมขวาบน เมื่อ Sidebar ปิดอยู่
+  // ⭐️ [CSS Enhancement] ปุ่มเปิด Sidebar
   <button
     onClick={onClick}
-    className="fixed top-20 right-0 p-2 bg-red-600 text-white z-50 rounded-l-lg shadow-xl hover:bg-red-700 transition duration-300 transform hover:scale-105"
+    className="fixed top-20 right-0 p-3 bg-red-600 text-white z-50 rounded-l-lg shadow-xl hover:bg-red-700 transition duration-300 transform hover:scale-105"
     title="Open Trending"
   >
     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -20,8 +20,10 @@ const OpenSidebarButton = ({ onClick }) => (
 
 function communityPage() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  // ⭐️ [ADD] State ใหม่สำหรับเก็บ Hashtag ที่ถูกเลือก
+  const [selectedHashtag, setSelectedHashtag] = useState(null); 
 
-const [isSidebarModalOpen, setIsSidebarModalOpen] = useState(true);
+  const [isSidebarModalOpen, setIsSidebarModalOpen] = useState(true);
   const openSidebarModal = () => setIsSidebarModalOpen(true);
   const closeSidebarModal = () => setIsSidebarModalOpen(false);
 
@@ -35,9 +37,19 @@ const [isSidebarModalOpen, setIsSidebarModalOpen] = useState(true);
 
   const handleCategoryClick = (id) => {
     setSelectedCategoryId(id);
-
+    // ⭐️ [UPDATE] เคลียร์ Hashtag เมื่อเลือก Category ใหม่
+    setSelectedHashtag(null); 
     console.log(`Category ID clicked: ${id}`);
   };
+  
+  // ⭐️ [ADD] ฟังก์ชันใหม่: จัดการเมื่อมีการคลิก Hashtag
+  const handleHashtagClick = (hashtag) => {
+      setSelectedHashtag(hashtag);
+      setSelectedCategoryId(null); // เคลียร์ Category ID เมื่อเลือก Hashtag
+      setIsSidebarModalOpen(false); // ปิด Sidebar หลังเลือก (ทางเลือก)
+      console.log(`Hashtag clicked: ${hashtag}`);
+  };
+
 
   return (
     <MainLayout>
@@ -46,15 +58,20 @@ const [isSidebarModalOpen, setIsSidebarModalOpen] = useState(true);
         activeId={selectedCategoryId}
       />
 
-      <div className="">
-        <PostContainer categoryId={selectedCategoryId} />
+      {/* ⭐️ [UPDATE] ส่ง selectedHashtag ไป PostContainer และปรับ Layout */}
+      <div className="ml-64 pt-4 px-4 md:px-8"> 
+        <PostContainer 
+            categoryId={selectedCategoryId}
+            selectedHashtag={selectedHashtag} 
+        />
       </div>
       
      {isSidebarModalOpen && (
         <div>
           <SidebarTrending 
             onClose={closeSidebarModal} 
-            selectedCategory={selectedCategoryId } // ส่ง category ที่เลือกไป
+            selectedCategory={selectedCategoryId }
+            onHashtagClick={handleHashtagClick} // ⭐️ [PASS] ส่ง Handler ไป SidebarTrending
           />
         </div>
       )}
