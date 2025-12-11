@@ -71,7 +71,7 @@
 
 //       <div className="flex flex-col flex-1">
 //         {/* ⭐️ [CSS Enhancement] Comment Bubble */}
-//         <div className="bg-[#2A2A2A] rounded-xl p-3 text-sm relative group shadow-inner shadow-black/20"> 
+//         <div className="bg-[#2A2A2A] rounded-xl p-3 text-sm relative group shadow-inner shadow-black/20">
 //           <p className="font-bold text-gray-200 mb-1">
 //             {comment.user?.username || "Unknown"}
 //           </p>
@@ -341,7 +341,7 @@
 // // 4. Main PostContainer
 // // ----------------------------------------------------
 // // ⭐️ [UPDATE] รับ selectedHashtag เป็น Prop
-// function PostContainer({ categoryId, selectedHashtag }) { 
+// function PostContainer({ categoryId, selectedHashtag }) {
 //   const [posts, setPosts] = useState([]);
 //   const [loading, setLoading] = useState(false);
 //   const user = useUserStore((state) => state.user);
@@ -360,13 +360,13 @@
 //       if (categoryId) {
 //         params.categoryId = categoryId;
 //       }
-      
+
 //       // ⭐️⭐️ [ADD] เพิ่ม Hashtag ใน Query Parameter ถ้ามี
 //       if (selectedHashtag) {
 //         // ส่ง Hashtag ไปยัง Backend โดยลบ '#' ออก (Backend ควรรับเฉพาะคำ)
-//         params.hashtag = selectedHashtag.substring(1); 
+//         params.hashtag = selectedHashtag.substring(1);
 //       }
-      
+
 //       const res = await axios.get(url, { params: params });
 //       setPosts(res.data.posts);
 //     } catch (err) {
@@ -379,7 +379,7 @@
 //   // ⭐️ [UPDATE] Dependency Array ต้องรวม selectedHashtag
 //   useEffect(() => {
 //     fetchPosts();
-//   }, [categoryId, selectedHashtag]); 
+//   }, [categoryId, selectedHashtag]);
 
 //   useEffect(() => {
 //     if (Array.isArray(categories) && categories.length === 0) {
@@ -415,18 +415,18 @@
 //   const categoryName = categoryId
 //     ? categories.find(c => c.id === categoryId)?.name || "Loading..."
 //     : "All Posts";
-    
-//   const displayHeader = selectedHashtag 
+
+//   const displayHeader = selectedHashtag
 //     ? `Posts containing: ${selectedHashtag}` // แสดง Hashtag ถ้าถูกเลือก
 //     : (
-//         categoryId 
+//         categoryId
 //           ? (loading ? `Posts : ${categoryName} (Loading...)` : `Posts : ${categoryName}`)
 //           : `Posts : All`
 //       );
 
 //   return (
 //     // ⭐️ [CSS Enhancement] Layout Width
-//     <div className="w-full max-w-[800px] mx-auto min-h-screen gap-4 rounded-lg bg-transparent"> 
+//     <div className="w-full max-w-[800px] mx-auto min-h-screen gap-4 rounded-lg bg-transparent">
 //       <CreatePost onOpenForm={openModal} />
 
 //       {/* ⭐️ [CSS Enhancement] Header Bar */}
@@ -496,7 +496,6 @@ const CommentItem = ({ comment, currentUser, token }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
-      console.error("Like comment error:", error);
       setIsLiked(!isLiked);
       setLikeCount((prev) => (!isLiked ? prev + 1 : prev - 1));
     }
@@ -520,7 +519,7 @@ const CommentItem = ({ comment, currentUser, token }) => {
 
       <div className="flex flex-col flex-1">
         {/* ⭐️ [CSS Enhancement] Comment Bubble */}
-        <div className="bg-[#2A2A2A] rounded-xl p-3 text-sm relative group shadow-inner shadow-black/20"> 
+        <div className="bg-[#2A2A2A] rounded-xl p-3 text-sm relative group shadow-inner shadow-black/20">
           <p className="font-bold text-gray-200 mb-1">
             {comment.user?.username || "Unknown"}
           </p>
@@ -556,12 +555,10 @@ const CommentItem = ({ comment, currentUser, token }) => {
   );
 };
 
-
-
 // ⭐️ คอมโพเนนต์ที่ถูกจัด CSS ใหม่
-const PostDisplay = ({ post, onDelete, index,currentUser, token }) => {
+const PostDisplay = ({ post, onDelete, index, currentUser, token }) => {
   const isDarkMode = useUserStore((state) => state.isDarkMode);
-    const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
   const [showComments, setShowComments] = useState(false);
@@ -583,20 +580,26 @@ const PostDisplay = ({ post, onDelete, index,currentUser, token }) => {
   }, [post, currentUser]);
 
   const handleLikePost = async () => {
+    const previousLiked = isLiked;
+    const previousCount = likeCount;
+
     try {
       const newIsLiked = !isLiked;
       setIsLiked(newIsLiked);
       setLikeCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
 
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : {};
+
       await axios.post(
         `${siteConfig.SERVER_URL}/api/post/${post.id}/like`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        config
       );
     } catch (error) {
-      console.error("Like Post error:", error);
-      setIsLiked(!isLiked);
-      setLikeCount((prev) => (!isLiked ? prev + 1 : prev - 1));
+      setIsLiked(previousLiked);
+      setLikeCount(previousCount);
     }
   };
 
@@ -636,105 +639,104 @@ const PostDisplay = ({ post, onDelete, index,currentUser, token }) => {
     }
   };
   return (
-//   <div
-//     key={post.id}
-//     // ⭐️ ปรับพื้นหลังและเงาให้ดูคล้ายการ์ดโพสต์สมัยใหม่
-//     className={`pt-6 transition-colors duration-300 animate-fade-up`}
-//     style={{ animationDelay: `${index * 0.25}s` }}
-//   >
-//     <div
-//       className={`flex flex-col gap-4 p-4 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg ${
-//         isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "hover:bg-white"
-//       }`}
-//     >
-//       {/* 1. Header และ User Info */}
-//       <div className="flex items-start gap-4">
-//         {/* Profile Avatar */}
-//         <div
-//           className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-//             isDarkMode ? "bg-gray-800" : "bg-gray-200"
-//           }`}
-//         >
-//           <svg
-//             className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-//             fill="currentColor"
-//             viewBox="0 0 20 20"
-//           >
-//             <path
-//               fillRule="evenodd"
-//               d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-//               clipRule="evenodd"
-//             />
-//           </svg>
-//         </div>
-        
-//         <div className="flex-1">
-//           <div className="flex items-center justify-between mb-1">
-//             <div className="flex items-center gap-2">
-//               {/* ชื่อผู้ใช้ */}
-//               <p className={`font-semibold hover:text-blue-400 cursor-pointer transition-colors ${
-//                 isDarkMode ? 'text-white' : 'text-black'
-//               }`}>
-//                 {post.user?.username || "Unknown User"}
-//               </p>
-//               {/* เวลาโพสต์ */}
-//               <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-//                 · {new Date(post.createdAt || post.timestamp).toLocaleDateString()}
-//               </span>
-//             </div>
-            
-//             {/* ปุ่มลบ */}
-//             <button
-//               onClick={() => onDelete(post.id)}
-//               className={`flex-shrink-0 p-1 rounded transition-colors cursor-pointer ${
-//                 isDarkMode 
-//                   ? 'hover:bg-gray-800 text-gray-500 hover:text-red-500' 
-//                   : 'hover:bg-gray-200 text-gray-400 hover:text-red-500'
-//               }`}
-//             >
-//               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-//                 <path
-//                   fillRule="evenodd"
-//                   d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-//                   clipRule="evenodd"
-//                 />
-//               </svg>
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-      
-//       {/* 2. เนื้อหา (Title และ Content) */}
-//       <div>
-//           <h4 className={`font-bold text-base mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-//             {post.title}
-//           </h4>
-//           {/* whitespace-pre-wrap สำคัญเพื่อให้รองรับการขึ้นบรรทัดใหม่ในข้อความ */}
-//           <p className={`whitespace-pre-wrap text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-//             {post.content}
-//           </p>
-//       </div>
+    //   <div
+    //     key={post.id}
+    //     // ⭐️ ปรับพื้นหลังและเงาให้ดูคล้ายการ์ดโพสต์สมัยใหม่
+    //     className={`pt-6 transition-colors duration-300 animate-fade-up`}
+    //     style={{ animationDelay: `${index * 0.25}s` }}
+    //   >
+    //     <div
+    //       className={`flex flex-col gap-4 p-4 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg ${
+    //         isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "hover:bg-white"
+    //       }`}
+    //     >
+    //       {/* 1. Header และ User Info */}
+    //       <div className="flex items-start gap-4">
+    //         {/* Profile Avatar */}
+    //         <div
+    //           className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+    //             isDarkMode ? "bg-gray-800" : "bg-gray-200"
+    //           }`}
+    //         >
+    //           <svg
+    //             className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+    //             fill="currentColor"
+    //             viewBox="0 0 20 20"
+    //           >
+    //             <path
+    //               fillRule="evenodd"
+    //               d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+    //               clipRule="evenodd"
+    //             />
+    //           </svg>
+    //         </div>
 
-//       {/* 3. รูปภาพ/Thumbnail */}
-//       { post.thumbnail && (
-//        <div>
-//          {/* ⭐️ ปรับขนาดรูป: Max-width เต็ม PostContainer, Max-height จำกัดไว้, object-cover เพื่อให้รูปไม่ยืด */}
-//          <img 
-//               src={post.thumbnail} 
-//               alt="thumbnail" 
-//               className={`w-full h-64 object-cover rounded-xl border ${
-//                 isDarkMode ? 'border-gray-700' : 'border-gray-300'
-//               }`}
-//               loading="lazy"
-//           />
-//        </div>
-//       )}
-//     </div>
-//   </div>
+    //         <div className="flex-1">
+    //           <div className="flex items-center justify-between mb-1">
+    //             <div className="flex items-center gap-2">
+    //               {/* ชื่อผู้ใช้ */}
+    //               <p className={`font-semibold hover:text-blue-400 cursor-pointer transition-colors ${
+    //                 isDarkMode ? 'text-white' : 'text-black'
+    //               }`}>
+    //                 {post.user?.username || "Unknown User"}
+    //               </p>
+    //               {/* เวลาโพสต์ */}
+    //               <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+    //                 · {new Date(post.createdAt || post.timestamp).toLocaleDateString()}
+    //               </span>
+    //             </div>
 
+    //             {/* ปุ่มลบ */}
+    //             <button
+    //               onClick={() => onDelete(post.id)}
+    //               className={`flex-shrink-0 p-1 rounded transition-colors cursor-pointer ${
+    //                 isDarkMode
+    //                   ? 'hover:bg-gray-800 text-gray-500 hover:text-red-500'
+    //                   : 'hover:bg-gray-200 text-gray-400 hover:text-red-500'
+    //               }`}
+    //             >
+    //               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+    //                 <path
+    //                   fillRule="evenodd"
+    //                   d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+    //                   clipRule="evenodd"
+    //                 />
+    //               </svg>
+    //             </button>
+    //           </div>
+    //         </div>
+    //       </div>
 
- <div className="bg-[#121212] shadow-xl rounded-xl p-5 border border-gray-800 relative text-white mb-6 transition-all duration-300 hover:shadow-red-900/10 hover:border-red-600/50">
-       {/* Header */}
+    //       {/* 2. เนื้อหา (Title และ Content) */}
+    //       <div>
+    //           <h4 className={`font-bold text-base mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+    //             {post.title}
+    //           </h4>
+    //           {/* whitespace-pre-wrap สำคัญเพื่อให้รองรับการขึ้นบรรทัดใหม่ในข้อความ */}
+    //           <p className={`whitespace-pre-wrap text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+    //             {post.content}
+    //           </p>
+    //       </div>
+
+    //       {/* 3. รูปภาพ/Thumbnail */}
+    //       { post.thumbnail && (
+    //        <div>
+    //          {/* ⭐️ ปรับขนาดรูป: Max-width เต็ม PostContainer, Max-height จำกัดไว้, object-cover เพื่อให้รูปไม่ยืด */}
+    //          <img
+    //               src={post.thumbnail}
+    //               alt="thumbnail"
+    //               className={`w-full h-64 object-cover rounded-xl border ${
+    //                 isDarkMode ? 'border-gray-700' : 'border-gray-300'
+    //               }`}
+    //               loading="lazy"
+    //           />
+    //        </div>
+    //       )}
+    //     </div>
+    //   </div>
+
+    <div className="bg-[#121212] shadow-xl rounded-xl p-5 border border-gray-800 relative text-white mb-6 transition-all duration-300 hover:shadow-red-900/10 hover:border-red-600/50">
+      {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-red-700 overflow-hidden shrink-0 border-2 border-red-500">
@@ -772,7 +774,9 @@ const PostDisplay = ({ post, onDelete, index,currentUser, token }) => {
 
       {/* Content */}
       <div className="mb-4">
-        <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+        <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">
+          {post.content}
+        </p>
       </div>
 
       {/* Thumbnail */}
@@ -884,16 +888,15 @@ const PostDisplay = ({ post, onDelete, index,currentUser, token }) => {
   );
 };
 
-function PostContainer({ categoryId,selectedHashtag }) {
-   const [posts, setPosts] = useState([]);
+function PostContainer({ categoryId, selectedHashtag }) {
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const user = useUserStore((state) => state.user);
   const token = useUserStore((state) => state.token);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const categories = useUserStore(state=>state.categories)
-  const getCategories = useUserStore(state=>state.getCategories)
+  const categories = useUserStore((state) => state.categories);
+  const getCategories = useUserStore((state) => state.getCategories);
   const isDarkMode = useUserStore((state) => state.isDarkMode);
-
 
   const fetchPosts = async () => {
     try {
@@ -904,17 +907,16 @@ function PostContainer({ categoryId,selectedHashtag }) {
       if (categoryId) {
         params.categoryId = categoryId;
       }
-      
+
       // ⭐️⭐️ [ADD] เพิ่ม Hashtag ใน Query Parameter ถ้ามี
       if (selectedHashtag) {
         // ส่ง Hashtag ไปยัง Backend โดยลบ '#' ออก (Backend ควรรับเฉพาะคำ)
-        params.hashtag = selectedHashtag.substring(1); 
+        params.hashtag = selectedHashtag.substring(1);
       }
-      
+
       const res = await axios.get(url, { params: params });
       setPosts(res.data.posts);
     } catch (err) {
-      console.error("Error fetching posts:", err);
     } finally {
       setLoading(false);
     }
@@ -923,7 +925,7 @@ function PostContainer({ categoryId,selectedHashtag }) {
   // ⭐️ [UPDATE] Dependency Array ต้องรวม selectedHashtag
   useEffect(() => {
     fetchPosts();
-  }, [categoryId, selectedHashtag]); 
+  }, [categoryId, selectedHashtag]);
 
   useEffect(() => {
     if (Array.isArray(categories) && categories.length === 0) {
@@ -931,25 +933,22 @@ function PostContainer({ categoryId,selectedHashtag }) {
     }
   }, [categories, getCategories]);
 
-    const openModal = () => setIsModalOpen(true);
+  const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-
-    const handlePostCreated = () => {
+  const handlePostCreated = () => {
     fetchPosts();
     closeModal();
     // ⭐️ ควรเพิ่ม signalPostUpdate() ที่เราคุยกันก่อนหน้า เพื่ออัปเดต Trending
   };
 
   const handleDeletePost = async (postId) => {
-    if (!confirm("ต้องการลบโพสต์นี้ใช่ไหม?")) return;
-
     try {
       await axios.delete(`${siteConfig.SERVER_URL}/api/post/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(posts.filter((post) => post.id !== postId));
-      toast.success("Delete post successfully")
+      toast.success("Delete post successfully");
       // ⭐️ ควรเพิ่ม signalPostUpdate() เพื่ออัปเดต Trending
     } catch (err) {
       toast.error(err.response?.data?.message || "ลบไม่สำเร็จ");
@@ -958,16 +957,16 @@ function PostContainer({ categoryId,selectedHashtag }) {
 
   // ⭐️ [UPDATE] Logic การหาชื่อ Category และ Header
   const categoryName = categoryId
-    ? categories.find(c => c.id === categoryId)?.name || "Loading..."
+    ? categories.find((c) => c.id === categoryId)?.name || "Loading..."
     : "All Posts";
-    
-  const displayHeader = selectedHashtag 
+
+  const displayHeader = selectedHashtag
     ? `Posts containing: ${selectedHashtag}` // แสดง Hashtag ถ้าถูกเลือก
-    : (
-        categoryId 
-          ? (loading ? `Posts : ${categoryName} (Loading...)` : `Posts : ${categoryName}`)
-          : `Posts : All`
-      );
+    : categoryId
+    ? loading
+      ? `Posts : ${categoryName} (Loading...)`
+      : `Posts : ${categoryName}`
+    : `Posts : All`;
 
   return (
     <div className="w-full max-w-4xl mx-auto min-h-screen gap-4 rounded-lg bg-transparent">
@@ -977,7 +976,13 @@ function PostContainer({ categoryId,selectedHashtag }) {
 
       <div className="space-y-0">
         {loading ? (
-          <p className={`text-center ${isDarkMode ? 'text-white' : 'text-black'}`}>กำลังโหลด...</p>
+          <p
+            className={`text-center ${
+              isDarkMode ? "text-white" : "text-black"
+            }`}
+          >
+            กำลังโหลด...
+          </p>
         ) : posts.length > 0 ? (
           posts.map((post, index) => (
             <PostDisplay
@@ -990,12 +995,15 @@ function PostContainer({ categoryId,selectedHashtag }) {
             />
           ))
         ) : (
-          <p className={`text-center py-10 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+          <p
+            className={`text-center py-10 ${
+              isDarkMode ? "text-gray-500" : "text-gray-400"
+            }`}
+          >
             ยังไม่มีโพสต์ในหมวดหมู่นี้
           </p>
         )}
       </div>
-
     </div>
   );
 }
