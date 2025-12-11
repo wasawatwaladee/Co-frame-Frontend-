@@ -252,7 +252,7 @@ export default function ProfilePage() {
                         isDarkMode ? "text-zinc-500" : "text-gray-500"
                       }`}
                     >
-                      Joined {profileData.joinDate}
+                      Joined {profileData.createdAt ? new Date(profileData.createdAt).toLocaleDateString() : 'N/A'}
                     </p>
                   </div>
                 </div>
