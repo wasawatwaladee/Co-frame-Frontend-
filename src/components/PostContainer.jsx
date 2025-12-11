@@ -44,7 +44,6 @@ const CommentItem = ({ comment, currentUser, token }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
-      console.error("Like comment error:", error);
       setIsLiked(!isLiked);
       setLikeCount((prev) => (!isLiked ? prev + 1 : prev - 1));
     }
@@ -126,20 +125,26 @@ const PostDisplay = ({ post, onDelete, currentUser, token }) => {
   }, [post, currentUser]);
 
   const handleLikePost = async () => {
+    const previousLiked = isLiked;
+    const previousCount = likeCount;
+
     try {
       const newIsLiked = !isLiked;
       setIsLiked(newIsLiked);
       setLikeCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
 
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : {};
+
       await axios.post(
         `http://localhost:5500/api/post/${post.id}/like`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        config
       );
     } catch (error) {
-      console.error("Like Post error:", error);
-      setIsLiked(!isLiked);
-      setLikeCount((prev) => (!isLiked ? prev + 1 : prev - 1));
+      setIsLiked(previousLiked);
+      setLikeCount(previousCount);
     }
   };
 
@@ -173,7 +178,6 @@ const PostDisplay = ({ post, onDelete, currentUser, token }) => {
       setCommentText("");
     } catch (error) {
       console.error("Comment error:", error);
-      alert("คอมเมนต์ไม่สำเร็จ");
     } finally {
       setCommentLoading(false);
     }
@@ -332,9 +336,6 @@ const PostDisplay = ({ post, onDelete, currentUser, token }) => {
   );
 };
 
-// ----------------------------------------------------
-// 4. Main PostContainer
-// ----------------------------------------------------
 function PostContainer({ categoryId }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -352,7 +353,6 @@ function PostContainer({ categoryId }) {
       const res = await axios.get(url);
       setPosts(res.data.posts);
     } catch (err) {
-      console.error("Error fetching posts:", err);
     } finally {
       setLoading(false);
     }
@@ -371,16 +371,12 @@ function PostContainer({ categoryId }) {
   };
 
   const handleDeletePost = async (postId) => {
-    if (!confirm("ต้องการลบโพสต์นี้ใช่ไหม?")) return;
-
     try {
       await axios.delete(`http://localhost:5500/api/post/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(posts.filter((post) => post.id !== postId));
-    } catch (err) {
-      alert(err.response?.data?.message || "ลบไม่สำเร็จ");
-    }
+    } catch (err) {}
   };
 
   return (

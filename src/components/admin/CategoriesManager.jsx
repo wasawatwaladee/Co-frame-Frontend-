@@ -1,86 +1,138 @@
-import React from 'react';
-import { Search, Plus, Trash2, Edit2 } from 'lucide-react'; // Icon library
+import { useState, useEffect } from "react";
+import { Plus, Loader } from "lucide-react";
+import axios from "axios";
+import useUserStore from "../../stores/Store";
 
-// Component สำหรับการ์ดหมวดหมู่แต่ละใบ
-const CategoryCard = ({ title, slug, description, downloadCount, accentColor }) => {
-  // accentColor ใช้สำหรับจุดสีเล็ก ๆ และไอคอน (แทนการใช้สีสถานะ)
-  // ตัวอย่างค่า accentColor: 'text-red-500', 'text-purple-500', 'text-gray-500', 'text-yellow-500'
-  
-  return (
-    <div className="bg-gray-800 p-5 rounded-lg flex flex-col justify-between hover:bg-gray-700 transition duration-150 ease-in-out">
-      
-      {/* Header and Actions */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center space-x-2">
-          {/* จุดสี/Accent Color */}
-          <div className={`w-3 h-3 rounded-full ${accentColor.replace('text-', 'bg-')}`}></div>
-          
-          <div className="flex flex-col">
-            <h3 className="text-xl font-bold text-white">{title}</h3>
-            <p className="text-gray-400 text-sm">{slug}</p>
-          </div>
-        </div>
-        
-        {/* Edit and Delete Icons */}
-        <div className="flex space-x-3 text-gray-500">
-          <button className="hover:text-blue-400 transition duration-150">
-            <Edit2 size={16} />
-          </button>
-          <button className="hover:text-red-500 transition duration-150">
-            <Trash2 size={16} />
-          </button>
-        </div>
-      </div>
-      
-      {/* Description */}
-      <p className="text-gray-300 mb-6 flex-grow">{description}</p>
-      
-      {/* Footer / Stats */}
-      <div className="border-t border-gray-700 pt-3">
-        <span className="text-gray-400 text-sm">
-          จำนวนโพสต์: <strong className="text-white">{downloadCount}</strong>
-        </span>
-      </div>
-    </div>
-  );
-};
+import CategoryModal from "./modal/CategoryModel";
+import CategoryCard from "./ui/CardCategory";
 
-// Main component สำหรับหน้าจัดการหมวดหมู่
 const CategoryManager = () => {
-  const categories = [
-    { title: 'Action', slug: '/action', description: 'หมวดหมู่สำหรับเนื้อหาแอ็กชัน ผจญภัย', downloadCount: 45, accentColor: 'text-red-500' },
-    { title: 'Drama', slug: '/drama', description: 'หมวดหมู่สำหรับเนื้อหาดราม่า น่าติดตาม', downloadCount: 32, accentColor: 'text-purple-500' },
-    { title: 'Horror', slug: '/horror', description: 'หมวดหมู่สำหรับเนื้อหาสยองขวัญ', downloadCount: 28, accentColor: 'text-gray-500' },
-    { title: 'Comedy', slug: '/comedy', description: 'หมวดหมู่สำหรับเนื้อหาตลก สนุกสนาน', downloadCount: 56, accentColor: 'text-yellow-500' },
-  ];
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+
+  const token = useUserStore((state) => state.token);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("http://localhost:5500/api/categories");
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data.categories || [];
+      setCategories(data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // ฟังก์ชันนี้จะได้รับ { name, slug, description } จาก Modal
+  const handleSaveCategory = async (formData) => {
+    try {
+      if (editingCategory) {
+        // Update
+        const res = await axios.put(
+          `http://localhost:5500/api/categories/${editingCategory.id}`,
+          formData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        // ใช้ข้อมูลล่าสุดจาก Backend หรือผสมข้อมูลเก่ากับใหม่
+        const updatedCat = res.data.category ||
+          res.data || { ...editingCategory, ...formData };
+
+        setCategories((prev) =>
+          prev.map((cat) => (cat.id === editingCategory.id ? updatedCat : cat))
+        );
+      } else {
+        // Create
+        const res = await axios.post(
+          "http://localhost:5500/api/categories",
+          formData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const newCategory = res.data.category || res.data;
+        setCategories((prev) => [newCategory, ...prev]);
+      }
+    } catch (err) {
+      alert("บันทึกไม่สำเร็จ: " + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("ยืนยันการลบหมวดหมู่?")) return;
+    try {
+      await axios.delete(`http://localhost:5500/api/categories/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCategories((prev) => prev.filter((cat) => cat.id !== id));
+    } catch (err) {
+      alert("ลบไม่สำเร็จ: " + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const openCreateModal = () => {
+    setEditingCategory(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (category) => {
+    setEditingCategory(category);
+    setIsModalOpen(true);
+  };
 
   return (
-    <div className="bg-gray-900 min-h-screen p-6">
-
-        {/* --- Header and Add Button --- */}
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-white">จัดการหมวดหมู่</h2>
-          
-          <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-150">
-            <Plus size={20} />
-            <span>เพิ่มหมวดหมู่</span>
-          </button>
+    <div className="bg-gray-900 min-h-screen p-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-gray-800 pb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-white tracking-tight">
+            จัดการหมวดหมู่
+          </h2>
+          <p className="text-gray-400 mt-1 text-sm">
+            รายการ ({categories.length})
+          </p>
         </div>
 
-        {/* --- Category Grid --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {categories.map((category) => (
+        <button
+          onClick={openCreateModal}
+          className="flex items-center space-x-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/30"
+        >
+          <Plus size={20} />
+          <span>เพิ่มหมวดหมู่</span>
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center h-64 text-white/50">
+          <Loader className="animate-spin mr-2" /> กำลังโหลด...
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {categories.map((category, index) => (
             <CategoryCard
-              key={category.title}
-              title={category.title}
-              slug={category.slug}
-              description={category.description}
-              downloadCount={category.downloadCount}
-              accentColor={category.accentColor}
+              key={category.id || index}
+              category={category}
+              colorIndex={index}
+              onEdit={openEditModal}
+              onDelete={handleDelete}
             />
           ))}
         </div>
-      </div>
+      )}
+
+      <CategoryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSaveCategory}
+        initialData={editingCategory}
+      />
+    </div>
   );
 };
 
