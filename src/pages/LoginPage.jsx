@@ -7,8 +7,9 @@ import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
 import useUserStore from "../stores/Store";
+import { siteConfig } from "../constant/config";
 
-const API_URL = "http://localhost:5500/api/auth/google/login";
+const API_URL = `${siteConfig.SERVER_URL}/api/auth/google/login`;
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);

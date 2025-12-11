@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import  authApi  from "../api/api";
 import axios from "axios";
+import { siteConfig } from "../constant/config";
 
 const useUserStore = create(persist((set, get) => ({
     user: null,
@@ -47,7 +48,7 @@ const useUserStore = create(persist((set, get) => ({
 
     googleLogin: async (idToken) => {
 
-        const API_URL = 'http://localhost:5500/api/auth/google/login';
+        const API_URL = `${siteConfig.SERVER_URL}/api/auth/google/login`;
 
         const res = await axios.post(API_URL, { idToken });
 
