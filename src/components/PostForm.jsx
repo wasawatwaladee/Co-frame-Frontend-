@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import useUserStore from "../stores/Store";
 import { toast } from "react-toastify";
+import { siteConfig } from "../constant/config";
 
 function PostForm({ onPostCreated }) {
   const [title, setTitle] = useState("");
@@ -16,7 +17,7 @@ function PostForm({ onPostCreated }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:5500/api/categories");
+        const res = await axios.get(`${siteConfig.SERVER_URL}/api/categories`);
         setCategories(res.data.categories);
         if (res.data.categories.length > 0) {
           setCategoryId(res.data.categories[0].id);
@@ -42,7 +43,7 @@ function PostForm({ onPostCreated }) {
 
       // ยิง API สร้าง Post
       const response = await axios.post(
-        "http://localhost:5500/api/post",
+        `${siteConfig.SERVER_URL}/api/post`,
         {
           title: title,
           content: content,

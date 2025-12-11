@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import useUserStore from '../stores/Store';
+import { siteConfig } from '../constant/config';
 
 
 // ⭐️ URL ใหม่สำหรับ Trending Hashtag
-const TRENDING_API_URL = 'http://localhost:5500/api/trending/hashtags'; 
+const TRENDING_API_URL = `${siteConfig.SERVER_URL}/api/trending/hashtags`; 
 
 // ⭐️ [UPDATE] รับ onHashtagClick เป็น Prop
 function SidebarTrending({ selectedCategory , onClose, onHashtagClick}) {

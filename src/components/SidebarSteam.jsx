@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { siteConfig } from "../constant/config";
 
 // รับ Props:
 // onSelect: ฟังก์ชันส่งค่า ID กลับไปบอกหน้าหลักว่าเลือกหมวดไหน
@@ -12,7 +13,7 @@ function SidebarCommunity({ onSelect, activeId }) {
       try {
         // ยิงไป API ที่เราทำไว้สำหรับ Community Category
         // (Route ที่คุณทำไว้ใน categories.route.js)
-        const res = await axios.get("http://localhost:5500/api/categories");
+        const res = await axios.get(`${siteConfig.SERVER_URL}/api/categories`);
         console.log('res', res)
         // res.data.categories ควรจะเป็น array ของ object: [{id: 1, name: "Review"}, ...]
         // เราจะเพิ่ม "ALL POSTS" ไว้ตัวแรกสุด

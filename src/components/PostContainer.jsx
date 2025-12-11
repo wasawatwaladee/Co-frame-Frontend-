@@ -4,7 +4,7 @@ import PostForm from "./PostForm";
 import useUserStore from "../stores/Store";
 import axios from "axios";
 import { toast } from "react-toastify"; // อย่าลืมติดตั้ง react-toastify และ ToastContainer ใน App.jsx
-
+import {siteConfig} from "../constant/config"
 
 const Modal = ({ children, onClose }) => {
   return (
@@ -42,7 +42,7 @@ const CommentItem = ({ comment, currentUser, token }) => {
       setLikeCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
 
       await axios.post(
-        `http://localhost:5500/api/comment/${comment.id}/like`,
+        `${siteConfig.SERVER_URL}/api/comment/${comment.id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -137,7 +137,7 @@ const PostDisplay = ({ post, onDelete, currentUser, token }) => {
       setLikeCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
 
       await axios.post(
-        `http://localhost:5500/api/post/${post.id}/like`,
+        `${siteConfig.SERVER_URL}/api/post/${post.id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -155,7 +155,7 @@ const PostDisplay = ({ post, onDelete, currentUser, token }) => {
     try {
       setCommentLoading(true);
       const res = await axios.post(
-        "http://localhost:5500/api/comment/",
+        `${siteConfig.SERVER_URL}/api/comment/`,
         {
           content: commentText,
           postId: post.id,
@@ -354,7 +354,7 @@ function PostContainer({ categoryId, selectedHashtag }) {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      let url = "http://localhost:5500/api/post";
+      let url = `${siteConfig.SERVER_URL}/api/post`;
       const params = {};
 
       if (categoryId) {
@@ -400,7 +400,7 @@ function PostContainer({ categoryId, selectedHashtag }) {
     if (!confirm("ต้องการลบโพสต์นี้ใช่ไหม?")) return;
 
     try {
-      await axios.delete(`http://localhost:5500/api/post/${postId}`, {
+      await axios.delete(`${siteConfig.SERVER_URL}/api/post/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(posts.filter((post) => post.id !== postId));
