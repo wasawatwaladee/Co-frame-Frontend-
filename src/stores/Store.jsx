@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import  authApi  from "../api/api";
 import axios from "axios";
+import { siteConfig } from "../constant/config";
 
 const useUserStore = create(persist((set, get) => ({
     user: null,
@@ -9,22 +10,13 @@ const useUserStore = create(persist((set, get) => ({
     isDarkMode: true, //Kay
     movies: [],
     categories: [],
-//    fetchUsers:async ()=>{
-//          try {
-//       const resp = await authApi.get('/api/auth/users')
-//       console.log('res.data', resp.data)
-//       return resp.data.users
-      
-//     } catch (err) {
-//       console.log(err)
-//     }
-//     } ,
+
 
     setUser: (user) => set({ user: user }),
 
     login: async (input) => {
         const resp = await authApi.post('/api/auth/login', input)
-        console.log('resp', resp)
+        
         set({
             token: resp.data.token,
             user: resp.data.user})},
@@ -33,7 +25,7 @@ const useUserStore = create(persist((set, get) => ({
     getMovies: async() => {
         try {
             const resp = await authApi.get('/movies')
-            console.log('resp.data getMovies', resp.data)
+            
             set({movies:resp.data})
             return resp.data
         } catch (error) {
@@ -45,7 +37,6 @@ const useUserStore = create(persist((set, get) => ({
         try {
             const resp = await authApi.get('/api/categories')
             set({categories:resp.data.categories})
-            console.log('resp.data.categories getCategories', resp.data.categories)
 
             return resp.data
         } catch (error) {
@@ -57,7 +48,7 @@ const useUserStore = create(persist((set, get) => ({
 
     googleLogin: async (idToken) => {
 
-        const API_URL = 'http://localhost:5500/api/auth/google/login';
+        const API_URL = `${siteConfig.SERVER_URL}/api/auth/google/login`;
 
         const res = await axios.post(API_URL, { idToken });
 

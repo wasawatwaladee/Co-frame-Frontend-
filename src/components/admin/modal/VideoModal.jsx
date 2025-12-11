@@ -1,6 +1,7 @@
 
 // VideoModal.jsx
 import React, { useState, useEffect } from "react"; 
+import { toast } from "react-toastify";
 
 
 export default function VideoModal({ isOpen, onClose, videoData, onSubmit ,categories=[]}) {
@@ -51,6 +52,7 @@ export default function VideoModal({ isOpen, onClose, videoData, onSubmit ,categ
 
   const handleSubmit = (e) => {
       e.preventDefault();
+      toast.success("Upload successfully")
       // ส่ง ID (ถ้ามี) และ Form Data กลับไปที่ VideoManager เพื่อยิง API
       onSubmit(isEditMode ? videoData.id : null, formData, isEditMode); 
   };
@@ -145,10 +147,10 @@ export default function VideoModal({ isOpen, onClose, videoData, onSubmit ,categ
 
             {/* ระยะเวลา */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-textSecondary">ระยะเวลา (วินาที)</label>
+              <label className="text-sm font-medium text-textSecondary">ระยะเวลา (นาที)</label>
               <input
                 type="text" name="duration" value={formData.duration} onChange={handleChange}
-                placeholder="7300 (วินาที)"
+                placeholder="... (นาที)"
                 className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
               />
             </div>
@@ -171,3 +173,4 @@ export default function VideoModal({ isOpen, onClose, videoData, onSubmit ,categ
     </div>
   );
 }
+

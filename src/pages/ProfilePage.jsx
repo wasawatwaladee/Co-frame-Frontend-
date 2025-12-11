@@ -4,6 +4,7 @@ import MainLayout from "../layouts/Layout";
 import useUserStore from "../stores/Store";
 import { useEffect } from "react";
 import axios from "axios";
+import { siteConfig } from "../constant/config";
 
 export default function ProfilePage() {
   const isDarkMode = useUserStore((state) => state.isDarkMode);
@@ -35,7 +36,7 @@ export default function ProfilePage() {
         let res
         if(username){
           res = await axios.get(
-            `http://localhost:5500/api/auth/me/${username.toLowerCase()}`
+            `${siteConfig.SERVER_URL}/api/auth/me/${username.toLowerCase()}`
           );
           setProfileData(res.data.user)
           // ใส่ค่าใน form แต่ไม่ให้ edit
@@ -54,7 +55,7 @@ export default function ProfilePage() {
           return;
         }
         if (token) {
-          res = await axios.get("http://localhost:5500/api/auth/me", {
+          res = await axios.get(`${siteConfig.SERVER_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -118,7 +119,7 @@ export default function ProfilePage() {
   const handleEditProfile = async () => {
     try {
       const res = await axios.put(
-        "http://localhost:5500/api/auth/me",
+        `${siteConfig.SERVER_URL}/api/auth/me`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -229,6 +230,7 @@ export default function ProfilePage() {
                       }`}
                     >
                       {profileData.firstName}
+                      {" "}
                       {profileData.lastName}
                     </h1>
                     <p
@@ -250,7 +252,7 @@ export default function ProfilePage() {
                         isDarkMode ? "text-zinc-500" : "text-gray-500"
                       }`}
                     >
-                      Joined {profileData.joinDate}
+                      Joined {profileData.createdAt ? new Date(profileData.createdAt).toLocaleDateString() : 'N/A'}
                     </p>
                   </div>
                 </div>

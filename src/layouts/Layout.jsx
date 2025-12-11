@@ -10,7 +10,8 @@ const MainLayout = ({ children }) => {
       {/* 1. Navbar (ติดอยู่ด้านบนเสมอ) */}
       <Navbar />
 
-      <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 py-8">
+      <main className="flex-1 w-full max-w-[1600px]
+      ">
         {children}
       </main>
     </div>

@@ -21,11 +21,17 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`sticky top-0 z-50 w-full backdrop-blur-md px-6 py-3 transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full px-6 py-3 transition-all duration-300 ${
         isDarkMode
-          ? "bg-black/95 border-b border-white/10"
-          : "bg-white/95 border-b border-gray-200"
+          ? "bg-black/0"
+          : "bg-white/0"
       }`}
+      style={{
+        backdropFilter: 'blur(3px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0) 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0) 100%)'
+      }}
     >
       <div className="flex items-center justify-between max-w-[1600px] mx-auto">
         {/* Left Side: Logo & Menu */}
