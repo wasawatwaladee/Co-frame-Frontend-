@@ -1,393 +1,323 @@
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-// import useUserStore from "../stores/Store";
-// import { toast } from "react-toastify";
-// import { siteConfig } from "../constant/config";
-
-// function PostForm({ onPostCreated }) {
-//   const [title, setTitle] = useState("");
-//   const [content, setContent] = useState("");
-//   const [categoryId, setCategoryId] = useState("");
-//   const [imageUrl, setImageUrl] = useState("");
-//   const token = useUserStore((state) => state.token);
-
-//   const [categories, setCategories] = useState([]);
-//   const [loading, setLoading] = useState(false);
-
-//   useEffect(() => {
-//     const fetchCategories = async () => {
-//       try {
-//         const res = await axios.get(`${siteConfig.SERVER_URL}/api/categories`);
-//         setCategories(res.data.categories);
-//         if (res.data.categories.length > 0) {
-//           setCategoryId(res.data.categories[0].id);
-//         }
-//       } catch (error) {
-//         console.error("Error fetching categories:", error);
-//       }
-//     };
-//     fetchCategories();
-//   }, []);
-
-//   // 3. ฟังก์ชัน Submit Form
-//   const hdlCreatePost = async (e) => {
-//     e.preventDefault();
-
-//     // Validation เบื้องต้น
-//     if (!title.trim() || !content.trim() || !categoryId) {
-//       return toast.warn("กรุณากรอกหัวข้อ เนื้อหา และเลือกหมวดหมู่");
-//     }
-
-//     try {
-//       setLoading(true);
-
-//       // ยิง API สร้าง Post
-//       const response = await axios.post(
-//         `${siteConfig.SERVER_URL}/api/post`,
-//         {
-//           title: title,
-//           content: content,
-//           categoryId: Number(categoryId),
-//           thumbnail: imageUrl,
-//         },
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-
-//       setTitle("");
-//       setContent("");
-//       setImageUrl("");
-
-//       if (onPostCreated) {
-//         onPostCreated(response.data.result);
-//       }
-      
-//       toast.success("สร้างโพสต์สำเร็จ!");
-//     } catch (error) {
-//       toast.error(error.response?.data?.message || "Please Login");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="bg-white p-6 rounded-lg shadow-md mb-6 border border-gray-100">
-//       <h3 className="text-2xl font-bold mb-4 text-gray-800">Create Post</h3>
-
-//       <form onSubmit={hdlCreatePost} className="flex flex-col gap-4">
-//         {/* Input: Title */}
-//         <div>
-//           <label className="block text-sm font-medium text-gray-700 mb-1">
-//             หัวข้อ
-//           </label>
-//           <input
-//             type="text"
-//             className="text-black border border-gray-300 p-3 rounded-lg w-full focus:ring-red-500 focus:border-red-500 outline-none"
-//             placeholder="หัวข้อเรื่อง..."
-//             value={title}
-//             onChange={(e) => setTitle(e.target.value)}
-//           />
-//         </div>
-
-//         {/* Input: Category & Image URL (วางคู่กัน) */}
-//         <div className="flex gap-4">
-//           <div className="w-1/2">
-//             <label className="block text-sm font-medium text-gray-700 mb-1">
-//               หมวดหมู่
-//             </label>
-//             <select
-//               className="w-full border border-gray-300 p-3 rounded-lg text-black focus:ring-red-500 focus:border-red-500 outline-none"
-//               value={categoryId}
-//               onChange={(e) => setCategoryId(e.target.value)}
-//             >
-//               <option value="" disabled>
-//                 เลือกหมวดหมู่
-//               </option>
-//               {categories.map((cat) => (
-//                 <option key={cat.id} value={cat.id}>
-//                   {cat.name}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div className="w-1/2">
-//             <label className="block text-sm font-medium text-gray-700 mb-1">
-//               รูปภาพ (URL)
-//             </label>
-//             <input
-//               type="text"
-//               className="text-black border border-gray-300 p-3 rounded-lg w-full focus:ring-red-500 focus:border-red-500 outline-none"
-//               placeholder="https://..."
-//               value={imageUrl}
-//               onChange={(e) => setImageUrl(e.target.value)}
-//             />
-//           </div>
-//         </div>
-
-//         {/* Input: Content (Textarea) */}
-//         <div>
-//           <label className="block text-sm font-medium text-gray-700 mb-1">
-//             เนื้อหา
-//           </label>
-//           <textarea
-//             rows="4"
-//             className="text-black border border-gray-300 p-3 rounded-lg w-full focus:ring-red-500 focus:border-red-500 outline-none resize-none"
-//             placeholder="คุณกำลังคิดอะไรอยู่?"
-//             value={content}
-//             onChange={(e) => setContent(e.target.value)}
-//           />
-//         </div>
-
-//         {/* Submit Button */}
-//         <button
-//           type="submit"
-//           className="bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-200 mt-2 shadow-lg shadow-red-500/30"
-//           disabled={loading || !title.trim() || !content.trim() || !categoryId}
-//         >
-//           {loading ? "Posting..." : "Create Post"}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default PostForm;
-
-
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import useUserStore from "../stores/Store";
 import { toast } from "react-toastify";
 import { siteConfig } from "../constant/config";
+import { Send, Image as ImageIcon, Tag, X, FileText } from 'lucide-react'; // 💡 เพิ่ม FileText icon
 
-function PostForm({ onPostCreated, onClose }) {
+function PostForm({ onPostCreated, onClose ,onPostRefresh, onTrendingRefresh}) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  
+  // 💡 MARK: NEW STATE สำหรับ File Upload
+  const [selectedFile, setSelectedFile] = useState(null); 
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(""); // เก็บ URL หลังอัปโหลด (ใช้ส่ง Post)
+
   const token = useUserStore((state) => state.token);
   const isDarkMode = useUserStore((state) => state.isDarkMode);
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
+
+  //   try {
+  //     setLoading(true);
+  //     let url = `${siteConfig.SERVER_URL}/api/post`;
+  //     const params = {};
+
+  //     if (categoryId) {
+  //       params.categoryId = categoryId;
+  //     }
+
+  //     // ⭐️⭐️ [ADD] เพิ่ม Hashtag ใน Query Parameter ถ้ามี
+  //     if (selectedHashtag) {
+  //       // ส่ง Hashtag ไปยัง Backend โดยลบ '#' ออก (Backend ควรรับเฉพาะคำ)
+  //       params.hashtag = selectedHashtag.substring(1);
+  //     }
+
+  //     const res = await axios.get(url, { params: params });
+  //     setPosts(res.data.posts);
+  //   } catch (err) {
+  //     console.error("Error fetching posts:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // 1. Fetch Categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get(`${siteConfig.SERVER_URL}/api/categories`);
         setCategories(res.data.categories);
+        // Set default category to the first one found
         if (res.data.categories.length > 0) {
-          setCategoryId(res.data.categories[0].id);
+          setCategoryId(String(res.data.categories[0].id));
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories.");
       }
     };
     fetchCategories();
   }, []);
 
-  // 3. ฟังก์ชัน Submit Form
+  // 💡 MARK: NEW FUNCTION: อัปโหลดไฟล์ไปที่ Server
+  const uploadFileToStorage = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file); // 'file' คือชื่อ field ที่ Backend คาดหวัง
+    
+    try {
+      // 💡 เรียก Backend API สำหรับอัปโหลด: /api/upload/image
+      const uploadRes = await axios.post(
+        `${siteConfig.SERVER_URL}/api/upload/image`,
+        formData,
+        {
+          headers: { 
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}` 
+          },
+        }
+      );
+      // Backend ควรตอบกลับมาเป็น { url: '...' }
+      return uploadRes.data.url; 
+    } catch (error) {
+      console.error("File upload failed:", error);
+      throw new Error("Cannot upload image.");
+    }
+  };
+
+  // 💡 MARK: NEW HANDLER: จัดการเมื่อเลือกไฟล์
+  const hdlFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error("Please select an image file (e.g., JPEG, PNG).");
+        setSelectedFile(null);
+        e.target.value = null; // Clear input
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
+
+  // 2. ฟังก์ชัน Submit Form (แก้ไข Logic)
   const hdlCreatePost = async (e) => {
     e.preventDefault();
 
-    // Validation เบื้องต้น
-    if (!title.trim() || !content.trim() || !categoryId) {
-      return toast.warn("กรุณากรอกหัวข้อ เนื้อหา และเลือกหมวดหมู่");
+    if ( !content.trim() || !categoryId) {
+      return toast.warn("กรุณากรอกเนื้อหา และเลือกหมวดหมู่ให้ครบถ้วน");
     }
 
     try {
       setLoading(true);
+      let finalImageUrl = "";
 
-      // ยิง API สร้าง Post
+      // 💡 MARK: Step A: อัปโหลดไฟล์ก่อนถ้ามี
+      if (selectedFile) {
+        toast.info("Uploading image...");
+        finalImageUrl = await uploadFileToStorage(selectedFile);
+        setUploadedImageUrl(finalImageUrl);
+      }
+
+      // 💡 MARK: Step B: ยิง API สร้าง Post โดยใช้ URL ที่ได้
       const response = await axios.post(
         `${siteConfig.SERVER_URL}/api/post`,
         {
-          title: title,
-          content: content,
+          title: title.trim(),
+          content: content.trim(),
           categoryId: Number(categoryId),
-          thumbnail: imageUrl,
+          thumbnail: finalImageUrl, // ใช้ URL ที่ได้จากการอัปโหลด
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
+      // Clear form
       setTitle("");
       setContent("");
-      setImageUrl("");
+      setSelectedFile(null); // Clear selected file
+      setUploadedImageUrl(""); // Clear URL
+      
+      if (categories.length > 0) {
+        setCategoryId(String(categories[0].id));
+      }
 
       if (onPostCreated) {
         onPostCreated(response.data.result);
       }
-
-      toast.success("สร้างโพสต์สำเร็จ!");
+      
+      if (onClose) {
+        onClose();
+      }
+     // 🔥 MARK 9: CALL REFRESH TRIGGERS
+      if (onPostRefresh) {
+         onPostRefresh(); 
+      }
+      if (onTrendingRefresh) { // ถ้ามี Trending Hashtag ใน Post อาจจะต้องอัปเดต Sidebar ด้วย
+         onTrendingRefresh(); 
+      }
+      toast.success("สร้างโพสต์สำเร็จ! 🎉");
     } catch (error) {
-      toast.error(error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างโพสต์");
+      // ตรวจสอบว่าเป็น Error จากการอัปโหลดไฟล์หรือไม่
+      const errorMessage = error.message.includes("Cannot upload image") 
+                         ? error.message
+                         : (error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างโพสต์");
+                         
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+  
+  const isFormValid = content.trim() && categoryId;
+  const isImageSelected = selectedFile !== null;
 
   return (
-    <div className={`rounded-3xl shadow-2xl overflow-hidden border transition-all duration-300 max-w-2xl w-full mx-auto ${
-      isDarkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black border-gray-700' 
-        : 'bg-gradient-to-br from-white via-gray-50 to-white border-gray-200'
-    }`}>
-      {/* Header with Cinema Effect */}
-      <div className={`relative px-6 py-6 border-b ${
-        isDarkMode 
-          ? 'bg-gray-800/50 border-gray-700' 
-          : 'bg-gradient-to-r from-gray-50 to-white border-gray-200'
+    <div className={`rounded-xl shadow-2xl overflow-hidden transition-all duration-300 max-w-lg w-full mx-auto 
+      ${isDarkMode 
+        ? 'bg-gray-800 border border-gray-700 text-white' 
+        : 'bg-white border border-gray-200 text-gray-900'
       }`}>
-        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-1 blur-[60px] rounded-full ${
-          isDarkMode ? 'bg-red-500/30' : 'bg-red-400/30'
-        }`}></div>
-        
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className={`text-2xl font-black tracking-tight bg-gradient-to-r ${
+      
+      {/* Header (Modal Style) */}
+      <div className={`flex items-center justify-between p-4 border-b 
+        ${isDarkMode 
+          ? 'border-gray-700 bg-gray-900/50' 
+          : 'border-gray-200 bg-gray-50'
+        }`}>
+        <h3 className={`text-lg font-bold ${
+          isDarkMode ? 'text-red-400' : 'text-red-600'
+        }`}>
+          Create Post
+        </h3>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className={`p-2 rounded-full transition-colors ${
               isDarkMode 
-                ? 'from-red-400 via-red-500 to-red-600' 
-                : 'from-red-600 via-red-500 to-red-700'
-            } bg-clip-text text-transparent uppercase drop-shadow-sm`}>
-              Create Your Post
-            </h3>
-            <p className={`text-xs font-medium tracking-wide mt-1 ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              Share your thoughts
-            </p>
-          </div>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className={`p-2 rounded-full transition-colors cursor-pointer ${
-                isDarkMode 
-                  ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
-                  : 'hover:bg-gray-200 text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-        </div>
+                ? 'text-gray-400 hover:bg-gray-700 hover:text-white' 
+                : 'text-gray-500 hover:bg-gray-200 hover:text-gray-900'
+            }`}
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Form Content */}
-      <form onSubmit={hdlCreatePost} className="p-6 space-y-4">
-        {/* Title Input */}
-        <div className="space-y-2">
-          <label className={`block text-xs font-bold tracking-wide uppercase ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            Post Title
-          </label>
-          <input
-            type="text"
-            className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 border-2 focus:ring-2 focus:ring-offset-0 outline-none ${
-              isDarkMode 
-                ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-500 focus:border-red-500 focus:ring-red-500/20' 
-                : 'bg-white border-gray-200 text-black placeholder-gray-400 focus:border-red-500 focus:ring-red-500/20'
-            }`}
-            placeholder="Enter your post title..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
+      <form onSubmit={hdlCreatePost} className="p-4 space-y-4">
 
-        {/* Category & Image URL Row */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Category Select */}
-          <div className="space-y-2">
-            <label className={`block text-xs font-bold tracking-wide uppercase ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Category
-            </label>
-            <select
-              className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 border-2 focus:ring-2 focus:ring-offset-0 outline-none cursor-pointer ${
-                isDarkMode 
-                  ? 'bg-gray-700/50 border-gray-600 text-white focus:border-red-500 focus:ring-red-500/20' 
-                  : 'bg-white border-gray-200 text-black focus:border-red-500 focus:ring-red-500/20'
-              }`}
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-            >
-              <option value="" disabled>
-                Select category
-              </option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Image URL Input */}
-          <div className="space-y-2">
-            <label className={`block text-xs font-bold tracking-wide uppercase ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Image URL
-            </label>
-            <input
-              type="text"
-              className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 border-2 focus:ring-2 focus:ring-offset-0 outline-none ${
-                isDarkMode 
-                  ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-500 focus:border-red-500 focus:ring-red-500/20' 
-                  : 'bg-white border-gray-200 text-black placeholder-gray-400 focus:border-red-500 focus:ring-red-500/20'
-              }`}
-              placeholder="https://..."
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Content Textarea */}
-        <div className="space-y-2">
-          <label className={`block text-xs font-bold tracking-wide uppercase ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            Content
-          </label>
+        {/* Content Textarea (Main body) */}
+        <div className="relative">
+          <label htmlFor="content" className="sr-only">Content</label>
           <textarea
-            rows="4"
-            className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 border-2 focus:ring-2 focus:ring-offset-0 outline-none resize-none ${
-              isDarkMode 
-                ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-500 focus:border-red-500 focus:ring-red-500/20' 
-                : 'bg-white border-gray-200 text-black placeholder-gray-400 focus:border-red-500 focus:ring-red-500/20'
-            }`}
-            placeholder="What's on your mind?"
+            id="content"
+            rows="5"
+            className={`w-full p-3 rounded-lg text-sm transition-all duration-300 border-2 focus:ring-2 focus:ring-offset-0 outline-none resize-none 
+              ${isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-500 focus:border-red-500 focus:ring-red-500/20' 
+                : 'bg-gray-50 border-gray-200 text-black placeholder-gray-400 focus:border-red-600 focus:ring-red-600/20'
+              }`}
+            placeholder="What's happening? (required)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
         </div>
+        
+        {/* 💡 MARK: File Display: แสดงชื่อไฟล์ที่เลือก */}
+        {selectedFile && (
+          <div className={`flex items-center text-sm p-2 rounded-lg 
+            ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+            <FileText className="w-4 h-4 mr-2 text-red-500" />
+            Selected Image: <strong>{selectedFile.name}</strong> 
+            <button 
+                type="button" 
+                onClick={() => setSelectedFile(null)}
+                className={`ml-auto p-1 rounded-full transition-colors ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}
+                aria-label="Remove image"
+            >
+                <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
-        {/* Submit Button */}
-        <div className="pt-2">
+        {/* Media/Category Row (Action bar style) */}
+        <div className={`flex justify-between items-center py-2 border-t 
+          ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+
+          {/* Left Side: Actions (Image, Category) */}
+          <div className="flex items-center space-x-3">
+            
+            {/* 💡 MARK: File Input: ปุ่มไอคอนรูปภาพที่เชื่อมโยงกับ Input Type File */}
+            <label htmlFor="file-upload" className={`p-2 rounded-full transition-colors flex items-center justify-center cursor-pointer 
+              ${isDarkMode 
+                ? 'text-green-400 hover:bg-gray-700' 
+                : 'text-green-600 hover:bg-gray-100'
+              }`}
+            >
+              <ImageIcon className="w-5 h-5" />
+              <input
+                id="file-upload"
+                type="file"
+                accept="image/*"
+                onChange={hdlFileChange}
+                className="hidden" // ซ่อน input เดิม
+              />
+            </label>
+            
+            {/* Category Select (Styled to look more like a tag/action) */}
+            <div className="relative">
+              <Tag className={`w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none 
+                ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+              <select
+                className={`pl-10 pr-4 py-2 rounded-full font-medium text-xs appearance-none transition-colors border-2 cursor-pointer 
+                  ${isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white focus:border-red-500 hover:bg-gray-600' 
+                    : 'bg-white border-gray-200 text-gray-800 focus:border-red-600 hover:bg-gray-100'
+                  }`}
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={String(cat.id)}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+          </div>
+
+          {/* Right Side: Submit Button */}
           <button
             type="submit"
-            className={`w-full py-3 px-4 rounded-lg font-bold text-sm tracking-wide uppercase transition-all duration-300 cursor-pointer transform hover:scale-[1.02] active:scale-95 disabled:scale-100 disabled:opacity-50 disabled:cursor-not-allowed ${
-              isDarkMode
-                ? 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-500 hover:to-red-600 shadow-lg shadow-red-600/40 disabled:shadow-none'
-                : 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-500 hover:to-red-600 shadow-lg shadow-red-600/40 disabled:shadow-none'
-            }`}
-            disabled={loading || !title.trim() || !content.trim() || !categoryId}
+            className={`py-2 px-4 rounded-full font-bold text-sm tracking-wide transition-all duration-300 
+              flex items-center gap-1.5 justify-center 
+              ${isFormValid && !loading
+                ? 'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/30 transform hover:scale-[1.03] active:scale-[0.98]'
+                : 'bg-gray-400 text-gray-600 cursor-not-allowed disabled:shadow-none'
+              }`}
+            disabled={loading || !isFormValid}
           >
             {loading ? (
-              <span className="flex items-center justify-center gap-2 text-xs">
-                <span className="animate-spin">⏳</span>
-                Posting...
-              </span>
+              <>
+                <span className="animate-spin">
+                  <Send className="w-4 h-4" />
+                </span>
+                <span className="text-xs">{isImageSelected ? 'Uploading & Posting...' : 'Posting...'}</span>
+              </>
             ) : (
-              'Create Post'
+              <>
+                <Send className="w-4 h-4" />
+                <span className="text-sm">Post</span>
+              </>
             )}
           </button>
         </div>
