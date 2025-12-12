@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Trash2, Loader, Eye, MessageCircle } from "lucide-react";
 import axios from "axios";
 import useUserStore from "../../stores/Store";
+import { toast } from "react-toastify";
 
 const PostItem = ({ post, onDelete }) => {
   // แปลงวันที่
@@ -105,15 +106,16 @@ const PostManager = () => {
 
   // Delete Post
   const handleDelete = async (id) => {
-    if (!window.confirm("คุณแน่ใจหรือไม่ที่จะลบโพสต์นี้?")) return;
+    // if (!window.confirm("คุณแน่ใจหรือไม่ที่จะลบโพสต์นี้?")) return;
 
     try {
       await axios.delete(`http://localhost:5500/api/post/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts((prev) => prev.filter((post) => post.id !== id));
+      toast.success("Delete successfully")
     } catch (err) {
-      alert("ลบไม่สำเร็จ: " + (err.response?.data?.message || err.message));
+      toast.error("Failed delete: " + (err.response?.data?.message || err.message));
     }
   };
 
