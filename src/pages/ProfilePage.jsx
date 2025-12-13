@@ -30,6 +30,9 @@ export default function ProfilePage() {
     username: "",
   });
 
+  const movies = useUserStore(state=>state.movies)
+  const getMovies = useUserStore(state=>state.getMovies)
+
   useEffect(()=>{
     const loadProfile = async ()=> {
       try {
@@ -38,7 +41,9 @@ export default function ProfilePage() {
           res = await axios.get(
             `${siteConfig.SERVER_URL}/api/auth/me/${username.toLowerCase()}`
           );
+          
           setProfileData(res.data.user)
+          
           // ใส่ค่าใน form แต่ไม่ให้ edit
           setFormData({
             firstName: res.data.user.firstName || "",
@@ -81,8 +86,10 @@ export default function ProfilePage() {
       }
     }
     loadProfile()
+    getMovies()
   },[username, token, setUser])
 
+  console.log('profileData', profileData)
   // useEffect(() => {
   //   const fetchProfile = async () => {
   //     try {
@@ -140,34 +147,7 @@ export default function ProfilePage() {
       console.error("Failed to update profile", error);
     }
   };
-  // const handleEditProfile = async () => {
-  //   console.log("✅ handleEditProfile CLICKED");
-  //   try {
-  //     const token = useUserStore.getState().token;
-
-  //     const res = await axios.put(
-  //       "http://localhost:5500/api/auth/me",
-  //       {
-  //         firstName: formData.firstName,
-  //         lastName: formData.lastName,
-  //         username: formData.username,
-  //         email: formData.email,
-  //         bio: formData.bio ?? "",
-  //         favoriteGenre: formData.favoriteGenre,
-  //       },
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
-
-  //     // update store
-  //     useUserStore.setState({ user: res.data.user });
-
-  //     setIsEditing(false);
-  //   } catch (error) {
-  //     console.error("Failed to update profile", error);
-  //   }
-  // };
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -206,7 +186,13 @@ export default function ProfilePage() {
                       isDarkMode ? "bg-zinc-800" : "bg-gray-200"
                     }`}
                   >
-                    <svg
+                   {
+                      profileData.picture ? 
+                       <img 
+                       className="w-full h-full object-cover rounded-full"
+                       src={profileData.picture} alt="" />
+                      :
+                       <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -220,6 +206,8 @@ export default function ProfilePage() {
                         d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                       />
                     </svg>
+                    }
+                   
                   </div>
 
                   {/* User Info */}
@@ -668,13 +656,15 @@ export default function ProfilePage() {
                 Favorite Movies
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
+                {[0, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className={`aspect-[2/3] w-full rounded-lg ${
+                    className={`aspect-[2/3] w-full h-full rounded-lg ${
                       isDarkMode ? "bg-zinc-800" : "bg-gray-300"
                     }`}
-                  ></div>
+                  >
+                    <img className = "w-full h-full object-cover" src={movies[i].thumbnail} alt="" />
+                  </div>
                 ))}
               </div>
             </div>

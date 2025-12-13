@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Trash2, Loader } from "lucide-react";
 import axios from "axios";
 import useUserStore from "../../stores/Store";
+import { toast } from "react-toastify";
 
 const CommentItem = ({ comment, onDelete }) => {
   const formattedDate = new Date(comment.createdAt).toLocaleDateString(
@@ -101,7 +102,7 @@ const CommentManager = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("ยืนยันที่จะลบความคิดเห็นนี้?")) return;
+    // if (!window.confirm("ยืนยันที่จะลบความคิดเห็นนี้?")) return;
 
     try {
       await axios.delete(`http://localhost:5500/api/comment/${id}`, {
@@ -109,8 +110,9 @@ const CommentManager = () => {
       });
       // ลบออกจาก state โดย filter id ที่ตรงกันออก
       setComments((prev) => prev.filter((item) => item.id !== id));
+      toast.success("Delete successfully")
     } catch (err) {
-      alert("ลบไม่สำเร็จ: " + (err.response?.data?.message || err.message));
+      toast.error("Failed delete: " + (err.response?.data?.message || err.message));
     }
   };
 

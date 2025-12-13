@@ -5,6 +5,7 @@ import useUserStore from "../../stores/Store";
 
 import CategoryModal from "./modal/CategoryModel";
 import CategoryCard from "./ui/CardCategory";
+import { toast } from "react-toastify";
 
 const CategoryManager = () => {
   const [categories, setCategories] = useState([]);
@@ -66,14 +67,16 @@ const CategoryManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("ยืนยันการลบหมวดหมู่?")) return;
+    // if (!window.confirm("ยืนยันการลบหมวดหมู่?")) return;
     try {
       await axios.delete(`http://localhost:5500/api/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCategories((prev) => prev.filter((cat) => cat.id !== id));
+      toast.success("Delete successfully")
+      
     } catch (err) {
-      alert("ลบไม่สำเร็จ: " + (err.response?.data?.message || err.message));
+      toast.error("Failed delete: " + (err.response?.data?.message || err.message));
     }
   };
 

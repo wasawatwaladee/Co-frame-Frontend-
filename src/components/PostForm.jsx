@@ -159,7 +159,7 @@ function PostForm({ onPostCreated, onClose ,onPostRefresh, onTrendingRefresh}) {
       if (onTrendingRefresh) { // ถ้ามี Trending Hashtag ใน Post อาจจะต้องอัปเดต Sidebar ด้วย
          onTrendingRefresh(); 
       }
-      toast.success("สร้างโพสต์สำเร็จ! 🎉");
+      toast.success("Post success!");
     } catch (error) {
       // ตรวจสอบว่าเป็น Error จากการอัปโหลดไฟล์หรือไม่
       const errorMessage = error.message.includes("Cannot upload image") 
