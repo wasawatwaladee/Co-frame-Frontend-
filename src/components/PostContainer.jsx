@@ -19,6 +19,10 @@ const CommentItem = ({ comment, currentUser, token }) => {
   }, [comment, currentUser]);
 
   const handleLikeComment = async () => {
+    if (!token) {
+    toast.error("Please login to like this comment.");
+    return;
+  }
     try {
       const newIsLiked = !isLiked;
       setIsLiked(newIsLiked);
@@ -117,6 +121,10 @@ const PostDisplay = ({ post, onDelete, index, currentUser, token}) => {
   }, [post, currentUser]);
 
   const handleLikePost = async () => {
+    if (!token) {
+    toast.error("Please login to like this post.");
+    return;
+  }
     const previousLiked = isLiked;
     const previousCount = likeCount;
 
@@ -170,7 +178,7 @@ const PostDisplay = ({ post, onDelete, index, currentUser, token}) => {
       setCommentText("");
     } catch (error) {
       console.error("Comment error:", error);
-      toast.error("คอมเมนต์ไม่สำเร็จ");
+      toast.error("Please login");
     } finally {
       setCommentLoading(false);
     }
@@ -297,7 +305,7 @@ const PostDisplay = ({ post, onDelete, index, currentUser, token}) => {
               <img 
                 src={post.thumbnail} 
                 alt="post thumbnail" 
-                className={`w-full h-64 object-cover transition-transform duration-500`}
+                className={`w-full h-180 object-cover transition-transform duration-500`}
                 loading="lazy"
               />
             </div>
@@ -493,7 +501,7 @@ function PostContainer({ categoryId, selectedHashtag, refreshKey, onTrendingRefr
       if (onTrendingRefresh) {
           onTrendingRefresh();
       }
-      toast.success("Delete post successfully");
+      toast.error("Delete post successfully");
       // ⭐️ ควรเพิ่ม signalPostUpdate() เพื่ออัปเดต Trending
     } catch (err) {
       toast.error(err.response?.data?.message || "ลบไม่สำเร็จ");
