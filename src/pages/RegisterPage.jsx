@@ -291,7 +291,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Email Input */}
-                <div className="mt-4">
+                <div>
                   <label
                     className={`block text-sm ${
                       isDarkMode ? "text-text-primary" : "text-gray-700"
@@ -321,7 +321,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Password Input */}
-                <div className="mt-4">
+                <div>
                   <label
                     className={`block text-sm ${
                       isDarkMode ? "text-text-primary" : "text-gray-700"
@@ -364,7 +364,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Confirm Password Input */}
-                <div className="mt-4">
+                <div>
                   <label
                     className={`block text-sm ${
                       isDarkMode ? "text-text-primary" : "text-gray-700"
