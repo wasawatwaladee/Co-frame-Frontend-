@@ -207,7 +207,7 @@ const DraggableCarousel = ({ movies, onCenterMovieChange }) => {
 export default function HomePage() {
   const [movies, setMovies] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [showFilter, setShowFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(true);
   // ⭐️ แก้ไข: กำหนดค่าเริ่มต้นเป็น null (จะถูกตั้งค่าใน useEffect)
   const [featuredMovie, setFeaturedMovie] = useState(null); 
   const [heroBackground, setHeroBackground] = useState("");
