@@ -57,8 +57,8 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim()) return alert("กรุณากรอกชื่อหมวดหมู่");
-    if (!formData.slug.trim()) return alert("กรุณากรอก Slug");
+    if (!formData.name.trim()) return alert("Please enter a category name");
+    if (!formData.slug.trim()) return alert("Please enter a slug");
 
     setLoading(true);
     await onSubmit(formData);
@@ -69,30 +69,30 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4 animate-fade-in">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md overflow-hidden border border-gray-700">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4 animate-fade-in">
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200 dark:border-white/10">
         {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-900/50">
-          <h3 className="text-lg font-bold text-white">
-            {initialData ? "แก้ไขหมวดหมู่" : "เพิ่มหมวดหมู่ใหม่"}
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-white/10 bg-gradient-to-r from-gray-50 dark:from-gray-900/50 to-gray-100 dark:to-gray-800/50">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            {initialData ? "Edit Category" : "Create New Category"}
           </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
             <X size={20} />
           </button>
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Name Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              ชื่อหมวดหมู่ (Name) <span className="text-red-500">*</span>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Category Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               name="name"
-              className="w-full bg-gray-700 text-white rounded-lg p-2.5 border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="เช่น Action Movies"
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
+              placeholder="e.g., Action Movies"
               value={formData.name}
               onChange={handleChange}
               autoFocus
@@ -101,63 +101,63 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
           {/* Slug Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Slug (URL) <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                 <LinkIcon size={14} />
               </div>
               <input
                 type="text"
                 name="slug"
-                className="w-full bg-gray-700 text-blue-300 rounded-lg p-2.5 pl-9 border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm"
+                className="w-full bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 rounded-lg p-3 pl-9 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none font-mono text-sm transition-all"
                 placeholder="action-movies"
                 value={formData.slug}
                 onChange={handleSlugChange}
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              ใช้สำหรับ URL (เช่น /category/action-movies)
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
+              Used for URL (e.g., /category/action-movies)
             </p>
           </div>
 
           {/* Description Input (Optional) */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              รายละเอียด (Description){" "}
-              <span className="text-gray-500 text-xs">(ไม่บังคับ)</span>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Description{" "}
+              <span className="text-gray-500 dark:text-gray-400 text-xs font-normal">(Optional)</span>
             </label>
             <textarea
               name="description"
               rows="3"
-              className="w-full bg-gray-700 text-white rounded-lg p-2.5 border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-              placeholder="คำอธิบายหมวดหมู่สั้นๆ..."
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none resize-none transition-all"
+              placeholder="Short description for this category..."
               value={formData.description}
               onChange={handleChange}
             />
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 mt-6">
+          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition"
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all cursor-pointer"
             >
-              ยกเลิก
+              Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-blue-900/20"
+              className="px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md cursor-pointer"
             >
               {loading ? (
                 <Loader className="animate-spin" size={16} />
               ) : (
                 <Save size={16} />
               )}
-              {initialData ? "บันทึก" : "สร้าง"}
+              {initialData ? "Save Changes" : "Create"}
             </button>
           </div>
         </form>

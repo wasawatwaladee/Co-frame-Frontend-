@@ -5,66 +5,66 @@ import useUserStore from "../../stores/Store";
 import { toast } from "react-toastify";
 
 const PostItem = ({ post, onDelete }) => {
-  // แปลงวันที่
-  const formattedDate = new Date(post.createdAt).toLocaleDateString("th-TH", {
+  // Format date
+  const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
     year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
   });
 
-  // เช็คจำนวน comments และ likes
+  // Check comment and like counts
   const commentCount = post.comments ? post.comments.length : 0;
   const likeCount = post.likes ? post.likes.length : 0;
 
   return (
-    <div className="bg-gray-800 p-4 mb-3 rounded-lg flex justify-between items-start hover:bg-gray-700 transition duration-150 ease-in-out border border-gray-700">
+    <div className="bg-white dark:bg-[#1a1a1a] p-5 mb-3 rounded-xl flex justify-between items-start hover:shadow-md dark:hover:bg-[#252525] transition-all duration-200 border border-gray-200 dark:border-white/5">
       <div className="flex flex-col flex-1 pr-4">
-        <div className="flex items-center space-x-2 flex-wrap gap-y-2">
+        <div className="flex items-center space-x-3 flex-wrap gap-y-2">
           {/* Title */}
-          <span className="text-white font-medium text-lg line-clamp-1">
-            {post.title || "ไม่มีหัวข้อ"}
+          <span className="text-gray-900 dark:text-white font-semibold text-lg line-clamp-1">
+            {post.title || "Untitled"}
           </span>
 
           {/* Status Badge */}
           {post.status === "DRAFT" && (
-            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">
-              แบบร่าง
+            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-500/30">
+              Draft
             </span>
           )}
 
-          {/* Action Button */}
-          <button className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition duration-150">
-            ดูโพสต์
+          {/* View Button */}
+          <button className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-600 text-blue-700 dark:text-white hover:bg-blue-200 dark:hover:bg-blue-700 transition-all duration-200 cursor-pointer">
+            View Post
           </button>
         </div>
 
         {/* Description/Content */}
-        <p className="text-gray-400 text-sm mt-1 line-clamp-2">
+        <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 line-clamp-2">
           {post.content || post.description || "-"}
         </p>
 
         {/* Metadata */}
-        <div className="flex items-center flex-wrap gap-3 text-xs text-gray-500 mt-2">
-          <span className="text-gray-300">
-            โดย <strong>{post.user?.username || "Unknown"}</strong>
+        <div className="flex items-center flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 mt-3">
+          <span className="text-gray-700 dark:text-gray-300">
+            by <strong className="font-semibold">{post.user?.username || "Unknown"}</strong>
           </span>
-          <span>&bull;</span>
+          <span className="hidden sm:inline">•</span>
           <span>{formattedDate}</span>
 
-          <span className="flex items-center gap-1">
-            &bull; <Eye size={14} /> {likeCount} Likes
+          <span className="flex items-center gap-1.5">
+            <Eye size={14} /> {likeCount} {likeCount === 1 ? "Like" : "Likes"}
           </span>
-          <span className="flex items-center gap-1">
-            &bull; <MessageCircle size={14} /> {commentCount} Comments
+          <span className="flex items-center gap-1.5">
+            <MessageCircle size={14} /> {commentCount} {commentCount === 1 ? "Comment" : "Comments"}
           </span>
         </div>
       </div>
 
-      {/* Delete Icon */}
+      {/* Delete Button */}
       <button
         onClick={() => onDelete(post.id)}
-        className="text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2 rounded-full transition duration-150 flex-shrink-0"
-        title="ลบโพสต์"
+        className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/10 p-2.5 rounded-lg transition-all duration-200 flex-shrink-0 cursor-pointer"
+        title="Delete Post"
       >
         <Trash2 size={20} />
       </button>
@@ -134,35 +134,47 @@ const PostManager = () => {
   });
 
   return (
-    <div className="bg-gray-900 min-h-screen p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Header and Search Bar */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <h2 className="text-2xl font-bold text-white">จัดการโพสต์</h2>
-            <span className="bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm">
-              ทั้งหมด:{" "}
-              <strong className="text-white ml-1">{posts.length}</strong>
+    <div>
+      {/* Header and Search Bar */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Post Management</h2>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Manage and moderate all user posts</p>
+            </div>
+
+            <span className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-semibold">
+              Total: <strong className="text-gray-900 dark:text-white ml-2">{posts.length}</strong>
             </span>
           </div>
 
-          <div className="relative">
+          <div className="relative w-full md:w-96 mb-6">
             <input
               type="text"
-              placeholder="ค้นหาชื่อโพสต์, เนื้อหา..."
-              className="p-2 pl-4 pr-10 w-64 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all focus:w-80"
+              placeholder="Search posts, content, author..."
+              className="w-full p-3 pl-10 rounded-lg bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all text-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 dark:text-gray-500"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
+            </svg>
           </div>
-        </div>
 
-        {/* --- Navbar เอาออกแล้ว --- */}
-
-        {/* Post List */}
+      {/* Posts List */}
         {loading ? (
-          <div className="flex justify-center items-center py-20 text-white">
-            <Loader className="animate-spin mr-2" /> กำลังโหลดข้อมูล...
+          <div className="flex justify-center items-center py-20 text-gray-600 dark:text-gray-400">
+            <Loader className="animate-spin mr-2" size={20} /> Loading posts...
           </div>
         ) : (
           <div className="space-y-2">
@@ -171,18 +183,17 @@ const PostManager = () => {
                 <PostItem key={post.id} post={post} onDelete={handleDelete} />
               ))
             ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-500 text-lg">ไม่พบข้อมูลโพสต์</p>
+              <div className="text-center py-16">
+                <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">No posts found</p>
                 {searchTerm && (
-                  <p className="text-gray-600 text-sm mt-2">
-                    ลองค้นหาด้วยคำอื่น
+                  <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+                    Try searching with different keywords
                   </p>
                 )}
               </div>
             )}
           </div>
         )}
-      </div>
     </div>
   );
 };
