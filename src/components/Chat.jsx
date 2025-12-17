@@ -86,8 +86,8 @@ export default function Chat({ roomId, user }) {
               <div
                 className={`max-w-[70%] px-3 py-2 rounded-xl ${
                   isMe
-                    ? "bg-red-600 text-white rounded-br-none"
-                    : "bg-gray-800 text-gray-200 rounded-bl-none"
+                    ? "bg-gradient-to-br from-red-600 to-red-950 text-white rounded-br-none"
+                    : "bg-gradient-to-br from-gray-800 to-gray-700 text-gray-200 rounded-bl-none"
                 }`}
               >
                 
