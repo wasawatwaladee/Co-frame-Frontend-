@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 const CommentItem = ({ comment, onDelete }) => {
   const formattedDate = new Date(comment.createdAt).toLocaleDateString(
-    "th-TH",
+    "en-US",
     {
       year: "numeric",
       month: "short",
@@ -15,7 +15,7 @@ const CommentItem = ({ comment, onDelete }) => {
   );
 
   const formattedTime = new Date(comment.createdAt).toLocaleTimeString(
-    "th-TH",
+    "en-US",
     {
       hour: "2-digit",
       minute: "2-digit",
@@ -25,44 +25,43 @@ const CommentItem = ({ comment, onDelete }) => {
   const displayUsername =
     comment.user?.username && comment.user.username !== ""
       ? comment.user.username
-      : `ไม่ระบุชื่อ (User ID: ${comment.userId})`;
+      : `Anonymous (User ID: ${comment.userId})`;
 
   return (
-    <div className="bg-gray-800 p-4 mb-3 rounded-lg flex justify-between items-start hover:bg-gray-700 transition duration-150 ease-in-out border border-gray-700">
+    <div className="bg-white dark:bg-[#1a1a1a] p-5 mb-3 rounded-xl flex justify-between items-start hover:shadow-md dark:hover:bg-[#252525] transition-all duration-200 border border-gray-200 dark:border-white/5">
       <div className="flex flex-col w-full pr-4">
         {/* Username */}
         <div className="flex items-center space-x-3 mb-2">
-          <span className="text-white font-semibold text-lg">
+          <span className="text-gray-900 dark:text-white font-semibold text-base">
             {displayUsername}
           </span>
         </div>
 
         {/* Post Title */}
-        <p className="text-gray-400 text-sm mb-2">
-          โพสต์:{" "}
-          <span className="text-blue-400 font-medium cursor-pointer hover:underline">
-            {comment.post?.title || "ไม่ระบุหัวข้อ"}
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
+          On post:{" "}\n          <span className="text-blue-600 dark:text-blue-400 font-medium cursor-pointer hover:underline">
+            {comment.post?.title || "Untitled"}
           </span>
         </p>
 
         {/* Comment Content */}
-        <p className="text-gray-200 mb-3 whitespace-pre-wrap">
+        <p className="text-gray-700 dark:text-gray-200 mb-3 whitespace-pre-wrap text-sm leading-relaxed">
           {comment.content}
         </p>
 
         {/* Date/Time */}
-        <div className="text-xs text-gray-500 flex gap-2">
+        <div className="text-xs text-gray-500 dark:text-gray-400 flex gap-2">
           <span>{formattedDate}</span>
           <span>•</span>
-          <span>{formattedTime} น.</span>
+          <span>{formattedTime}</span>
         </div>
       </div>
 
       {/* Delete Button */}
       <button
         onClick={() => onDelete(comment.id)}
-        className="text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2 rounded-full transition duration-150 flex-shrink-0"
-        title="ลบความคิดเห็น"
+        className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/10 p-2.5 rounded-lg transition-all duration-200 flex-shrink-0 cursor-pointer"
+        title="Delete Comment"
       >
         <Trash2 size={20} />
       </button>
@@ -117,27 +116,23 @@ const CommentManager = () => {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* --- Header --- */}
-        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
-          <div className="flex items-center space-x-6">
-            <h2 className="text-2xl font-bold text-white">จัดการคอมเมนต์</h2>
-            <div className="flex space-x-3 text-sm">
-              <span className="bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1 rounded-full">
-                ทั้งหมด:{" "}
-                <strong className="font-bold text-white ml-1">
-                  {comments?.length || 0}
-                </strong>
-              </span>
+    <div>
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Comment Management</h2>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Review and moderate user comments</p>
             </div>
-          </div>
-        </div>
 
-        {/* --- Content --- */}
+            <span className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-semibold">
+              Total: <strong className="text-gray-900 dark:text-white ml-2">{comments?.length || 0}</strong>
+            </span>
+      </div>
+
+      {/* Comments List */}
         {loading ? (
-          <div className="flex justify-center items-center py-20 text-white">
-            <Loader className="animate-spin mr-2" /> กำลังโหลดข้อมูล...
+          <div className="flex justify-center items-center py-20 text-gray-600 dark:text-gray-400">
+            <Loader className="animate-spin mr-2" size={20} /> Loading comments...
           </div>
         ) : (
           <div className="space-y-2">
@@ -150,13 +145,14 @@ const CommentManager = () => {
                 />
               ))
             ) : (
-              <p className="text-center text-gray-500 mt-10">
-                ไม่พบความคิดเห็น
-              </p>
+              <div className="text-center py-16">
+                <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+                  No comments found
+                </p>
+              </div>
             )}
           </div>
         )}
-      </div>
     </div>
   );
 };

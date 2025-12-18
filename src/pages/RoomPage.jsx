@@ -270,9 +270,10 @@ export default function RoomPage() {
         </div>
 
         {isWatchParty && (
-          <div className="w-[350px] bg-[#121212] border-l border-gray-800 flex flex-col">
-            <div className="px-5 py-4 border-b border-gray-800 flex justify-between items-center font-semibold text-lg text-red-600">
-              LIVE CHAT
+          <div className="w-[350px] bg-black border-l border-gray-800 flex flex-col">
+            <div className="px-5 py-4 border-b border-gray-800 flex justify-between items-centertext-lg font-bold">
+              <span className="bg-gradient-to-r from-red-600 via-red-650 to-red-800 bg-clip-text text-transparent">LIVE CHAT</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-radio-icon lucide-radio animate-pulse text-red-600"><path d="M16.247 7.761a6 6 0 0 1 0 8.478"/><path d="M19.075 4.933a10 10 0 0 1 0 14.134"/><path d="M4.925 19.067a10 10 0 0 1 0-14.134"/><path d="M7.753 16.239a6 6 0 0 1 0-8.478"/><circle cx="12" cy="12" r="2"/></svg>
             </div>
             <div className="flex-1 min-h-0">
               <Chat roomId={roomId} user={user} />

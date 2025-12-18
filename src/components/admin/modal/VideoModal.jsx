@@ -2,6 +2,7 @@
 // VideoModal.jsx
 import React, { useState, useEffect } from "react"; 
 import { toast } from "react-toastify";
+import { X } from "lucide-react";
 
 
 export default function VideoModal({ isOpen, onClose, videoData, onSubmit ,categories=[]}) {
@@ -59,114 +60,117 @@ export default function VideoModal({ isOpen, onClose, videoData, onSubmit ,categ
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-      <form onSubmit={handleSubmit} className="bg-[#1a1a1a] w-full max-w-2xl rounded-xl border border-white/10 shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1a1a1a] w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-gray-200 dark:border-white/10 flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-white/10 shrink-0">
-          <h3 className="text-xl font-bold text-white">
-            {isEditMode ? "แก้ไขวิดีโอ" : "เพิ่มวิดีโอใหม่"}
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-white/10 bg-gradient-to-r from-gray-50 dark:from-gray-900/50 to-gray-100 dark:to-gray-800/50 shrink-0">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            {isEditMode ? "Edit Video" : "Add New Video"}
           </h3>
-          <button type="button" onClick={onClose} className="text-textMuted hover:text-white transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
+          <button type="button" onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+            <X size={20} />
           </button>
         </div>
 
         {/* Form Content */}
-        <div className="p-6 space-y-5 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1">
           
-          {/* ชื่อวิดีโอ */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-textSecondary">ชื่อวิดีโอ</label>
+          {/* Video Title */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Video Title <span className="text-red-500">*</span>
+            </label>
             <input
               type="text" name="title" value={formData.title} onChange={handleChange}
-              className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+              placeholder="e.g., The Matrix"
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
             />
           </div>
 
-          {/* คำอธิบาย */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-textSecondary">คำอธิบาย</label>
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Description <span className="text-gray-500 dark:text-gray-400 text-xs font-normal">(Optional)</span>
+            </label>
             <textarea
               rows="3" name="description" value={formData.description} onChange={handleChange}
-              className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none"
+              placeholder="Enter video description..."
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none resize-none transition-all"
             ></textarea>
           </div>
 
-          {/* URL วิดีโอ */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-textSecondary">URL วิดีโอ</label>
+          {/* Video URL */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Video URL <span className="text-red-500">*</span>
+            </label>
             <input
               type="text" name="videoUrl" value={formData.videoUrl} onChange={handleChange}
               placeholder="https://example.com/movie.mp4"
-              className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
             />
           </div>
 
-          {/* URL รูปภาพปก */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-textSecondary">URL รูปภาพปก</label>
+          {/* Poster URL */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Poster URL <span className="text-red-500">*</span>
+            </label>
             <input
               type="text" name="poster" value={formData.poster} onChange={handleChange}
               placeholder="https://example.com/image.jpg"
-              className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* หมวดหมู่ */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-textSecondary">หมวดหมู่</label>
-              <div className="relative z-10">
-                <select
-                  name="categoryId" value={formData.categoryId} onChange={handleChange}
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
-                >
-                  {/* <option value="" key="default-cat-select">เลือกหมวดหมู่</option>
-                  {Array.isArray(categories) && categories.map(cat => (
-                      <option key={cat.id} value={cat.id.toString()}>
-                          {cat.name}
-                      </option>
-                  ))} */}
-                       <option value="1">Action</option>
-                      <option value="2">Comedy</option>
-                      <option value="3">Drama</option>
-                      <option value="4">Horror</option>
-                      <option value="5">Sci-Fi</option>
-                      <option value="6">Romance</option>
-                      <option value="7">Thriller</option>
-                 
-                
-                </select>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-textMuted absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
-                </svg>
-              </div>
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Category <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="categoryId" value={formData.categoryId} onChange={handleChange}
+                className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none appearance-none cursor-pointer transition-all"
+              >
+                <option value="1">Action</option>
+                <option value="2">Comedy</option>
+                <option value="3">Drama</option>
+                <option value="4">Horror</option>
+                <option value="5">Sci-Fi</option>
+                <option value="6">Romance</option>
+                <option value="7">Thriller</option>
+              </select>
             </div>
 
-            {/* ระยะเวลา */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-textSecondary">ระยะเวลา (นาที)</label>
+            {/* Duration */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Duration (Minutes) <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text" name="duration" value={formData.duration} onChange={handleChange}
-                placeholder="... (นาที)"
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                placeholder="120"
+                className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
               />
             </div>
           </div>
-
-          {/* วันที่อัพโหลด (ไม่จำเป็นต้องใช้ใน Form นี้) */}
-          {/* ... (ส่วนวันที่อัพโหลดเดิม) ... */}
-        </div>
+        </form>
 
         {/* Footer Actions */}
-        <div className="p-6 border-t border-white/10 flex items-center gap-3 bg-[#151515] shrink-0">
-          <button type="submit" className="flex-1 bg-primary hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors shadow-lg shadow-red-900/20">
-            {isEditMode ? "บันทึกการแก้ไข" : "เพิ่มวิดีโอ"}
+        <div className="p-6 border-t border-gray-200 dark:border-white/10 flex items-center gap-3 bg-gray-50 dark:bg-gray-900/20 shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-all cursor-pointer"
+          >
+            Cancel
           </button>
-          <button type="button" onClick={onClose} className="flex-1 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white font-medium py-3 rounded-lg transition-colors border border-white/5">
-            ยกเลิก
+          <button 
+            type="submit"
+            className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all shadow-lg shadow-red-900/30 cursor-pointer"
+          >
+            {isEditMode ? "Save Changes" : "Add Video"}
           </button>
         </div>
       </form>

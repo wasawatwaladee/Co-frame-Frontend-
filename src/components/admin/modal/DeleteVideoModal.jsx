@@ -19,17 +19,17 @@ export default function DeleteVideoModal({ isOpen, onClose, videoData , getMovie
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-[#1a1a1a] w-full max-w-md rounded-xl border border-white/10 shadow-2xl p-6 text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+      <div className="bg-white dark:bg-[#1a1a1a] w-full max-w-md rounded-xl border border-gray-200 dark:border-white/10 shadow-2xl p-8 text-center">
         {/* Warning Icon */}
-        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-8 h-8 text-primary"
+            className="w-8 h-8 text-red-600 dark:text-red-400"
           >
             <path
               strokeLinecap="round"
@@ -39,27 +39,27 @@ export default function DeleteVideoModal({ isOpen, onClose, videoData , getMovie
           </svg>
         </div>
 
-        <h3 className="text-xl font-bold text-white mb-2">
-          ยืนยันการลบวิดีโอ?
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+          Delete Video?
         </h3>
-        <p className="text-textSecondary text-sm mb-6">
-          คุณต้องการลบวิดีโอ <br />
-          <span className="text-white font-semibold">
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">
+          Are you sure you want to delete <br />
+          <span className="text-gray-900 dark:text-white font-semibold">
             "{videoData?.title}"
-          </span>{" "}
+          </span>
           <br />
-          ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้
+          This action cannot be undone.
         </p>
 
         <div className="flex items-center gap-3">
           <button
             onClick={onClose}
-            className="flex-1 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white font-medium py-2.5 rounded-lg transition-colors border border-white/5"
+            className="flex-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-medium py-2.5 rounded-lg transition-all border border-gray-300 dark:border-gray-700 cursor-pointer"
           >
-            ยกเลิก
+            Cancel
           </button>
-          <button onClick={()=>handleDelete()} className="flex-1 bg-primary hover:bg-red-700 text-white font-bold py-2.5 rounded-lg transition-colors shadow-lg shadow-red-900/20">
-            ลบวิดีโอ
+          <button onClick={() => handleDelete()} className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition-all shadow-md cursor-pointer">
+            Delete Video
           </button>
         </div>
       </div>

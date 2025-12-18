@@ -84,12 +84,12 @@ const DraggableCarousel = ({ movies, onCenterMovieChange }) => {
     const currentDistance = index - virtualCenterIndex;
     
     // ⭐️ ปรับ Logic การคำนวณ normalizedDistance เพื่อแสดงเฉพาะหนังที่อยู่ใกล้เท่านั้น
-    // เราต้องการแค่การ์ดที่อยู่ด้านซ้ายและขวา 3-4 ใบ
+    // เราต้องการแค่ 3 การ์ด: ซ้าย, กลาง, ขวา
     const absDistance = Math.abs(currentDistance); 
     
     // ใช้ distance เพื่อกำหนด Style
     let scale = 0.75;
-    let opacity = 0.5;
+    let opacity = 0;
     let blur = 6;
     let brightness = 0.7;
     let zIndex = 1;
@@ -106,13 +106,7 @@ const DraggableCarousel = ({ movies, onCenterMovieChange }) => {
       blur = 4;
       brightness = 0.85;
       zIndex = 30;
-    } else if (absDistance === 2) {
-      scale = 0.82;
-      opacity = 0.6;
-      blur = 5;
-      brightness = 0.75;
-      zIndex = 20;
-    } else if (absDistance > 2 && absDistance < movies.length) {
+    } else if (absDistance > 1) {
         // ซ่อนการ์ดที่ไกลเกินไปใน Virtual Array
         opacity = 0;
         zIndex = 1;
@@ -120,7 +114,7 @@ const DraggableCarousel = ({ movies, onCenterMovieChange }) => {
     }
 
     // ⭐️ คำนวณการเลื่อนตำแหน่ง (Translation)
-    const cardSpacing = 280; // ระยะห่างการ์ด (อิงตาม w-56 และ gap-6)
+    const cardSpacing = 270; // ระยะห่างการ์ด (อิงตาม w-56 และ gap-6)
     const translateValue = currentDistance * cardSpacing;
     
     return {
@@ -142,11 +136,11 @@ const DraggableCarousel = ({ movies, onCenterMovieChange }) => {
   const visibleCards = extendedMovies.slice(startIndex, endIndex);
 
 
-  return (
-    <div className="relative w-full h-80 lg:h-96 flex items-center justify-center">
+    return (
+    <div className="relative w-full h-96 lg:h-[28rem] flex items-center justify-center mt-16 md:mt-20 lg:mt-24">
       <div
         ref={carouselRef}
-        className="relative w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing overflow-hidden"
+        className="relative w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing overflow-visible"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -157,7 +151,7 @@ const DraggableCarousel = ({ movies, onCenterMovieChange }) => {
           {extendedMovies.map((movie, index) => {
             // ⭐️ ซ่อนการ์ดที่อยู่ไกลจากจุดศูนย์กลาง (เพื่อประสิทธิภาพ)
             const absDistance = Math.abs(index - virtualCenterIndex);
-            if (absDistance > 5) return null; 
+            if (absDistance > 1) return null; 
 
             return (
                 <div
@@ -213,7 +207,7 @@ const DraggableCarousel = ({ movies, onCenterMovieChange }) => {
 export default function HomePage() {
   const [movies, setMovies] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [showFilter, setShowFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(true);
   // ⭐️ แก้ไข: กำหนดค่าเริ่มต้นเป็น null (จะถูกตั้งค่าใน useEffect)
   const [featuredMovie, setFeaturedMovie] = useState(null); 
   const [heroBackground, setHeroBackground] = useState("");
@@ -282,10 +276,10 @@ export default function HomePage() {
 
   return (
     <MainLayout>
-      <div className="animate-fade-in">
+      <div className="animate-fade-in overflow-x-hidden">
         {movies.length > 0 && (
           <div
-            className={`relative w-screen left-1/2 -translate-x-1/2 mb-0 h-screen md:h-[90vh] lg:h-screen overflow-hidden transition-all duration-300 ${isDarkMode ? 'bg-black' : 'bg-white'}`}
+            className={`relative w-full mb-0 h-screen md:h-[90vh] lg:h-screen overflow-hidden transition-all duration-300 ${isDarkMode ? 'bg-black' : 'bg-white'}`}
             style={{
               backgroundImage: `url(${heroBackground})`,
               backgroundSize: "cover",

@@ -320,7 +320,7 @@ export default function LoginPage() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className={`w-full bg-primary py-3 text-sm font-bold rounded-lg hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                  className={`w-full bg-primary py-3 text-sm font-bold rounded-lg hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer ${
                     isDarkMode ? "text-white" : "text-black"
                   }`}
                 >
@@ -333,14 +333,16 @@ export default function LoginPage() {
                     "Sign In"
                   )}
                 </button>
+                
 
                 {/* Google Login Button */}
-                <div className="mt-4">
+                <div className="mt-6 pt-4 border-t border-gray-300 dark:border-gray-700">
                   {profile ? (
                     <div
                       className={`p-4 rounded-lg ${
                         isDarkMode ? "bg-surface-dark" : "bg-gray-100"
                       }`}
+                      
                     >
                       <h3
                         className={`font-bold mb-2 ${
@@ -371,20 +373,22 @@ export default function LoginPage() {
                       </button>
                     </div>
                   ) : (
-                    <GoogleLogin
-                      onSuccess={(credentialResponse) => {
-                        setGoogleResponse(credentialResponse);
-                        console.log(
-                          "Google Component Success:",
-                          credentialResponse
-                        );
-                      }}
-                      onError={() => console.log("Google Component Failed.")}
-                      // การตั้งค่าเหล่านี้ใช้ในการปรับรูปลักษณ์ปุ่ม Google
-                      text="continue_with"
-                      size="large"
-                      width="400px" // กำหนดความกว้าง (เนื่องจากปุ่มเดิมใช้ w-full)
-                    />
+                    <div className="flex items-center justify-center">
+                      <GoogleLogin
+                        onSuccess={(credentialResponse) => {
+                          setGoogleResponse(credentialResponse);
+                          console.log(
+                            "Google Component Success:",
+                            credentialResponse
+                          );
+                        }}
+                        onError={() => console.log("Google Component Failed.")}
+                        text="signin_with"
+                        size="large"
+                        theme={isDarkMode ? "filled_black" : "outline"}
+                        locale="en"
+                      />
+                    </div>
                   )}
                 </div>
 

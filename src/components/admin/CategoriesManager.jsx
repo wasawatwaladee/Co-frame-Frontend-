@@ -62,7 +62,7 @@ const CategoryManager = () => {
         setCategories((prev) => [newCategory, ...prev]);
       }
     } catch (err) {
-      alert("บันทึกไม่สำเร็จ: " + (err.response?.data?.message || err.message));
+      alert("Save failed: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -91,41 +91,49 @@ const CategoryManager = () => {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen p-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-gray-800 pb-6">
+    <div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-white tracking-tight">
-            จัดการหมวดหมู่
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight mb-1">
+            Category Management
           </h2>
-          <p className="text-gray-400 mt-1 text-sm">
-            รายการ ({categories.length})
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            Manage {categories.length} {categories.length === 1 ? "category" : "categories"}
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/30"
+          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg font-semibold transition-all shadow-md cursor-pointer"
         >
           <Plus size={20} />
-          <span>เพิ่มหมวดหมู่</span>
+          <span>Add Category</span>
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64 text-white/50">
-          <Loader className="animate-spin mr-2" /> กำลังโหลด...
+        <div className="flex justify-center items-center h-64 text-gray-500 dark:text-gray-400">
+          <Loader className="animate-spin mr-2" size={20} /> Loading categories...
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {categories.map((category, index) => (
-            <CategoryCard
-              key={category.id || index}
-              category={category}
-              colorIndex={index}
-              onEdit={openEditModal}
-              onDelete={handleDelete}
-            />
-          ))}
+          {categories.length > 0 ? (
+            categories.map((category, index) => (
+              <CategoryCard
+                key={category.id || index}
+                category={category}
+                colorIndex={index}
+                onEdit={openEditModal}
+                onDelete={handleDelete}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-16">
+              <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+                No categories found
+              </p>
+            </div>
+          )}
         </div>
       )}
 

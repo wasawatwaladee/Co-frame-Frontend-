@@ -32,10 +32,10 @@ const MovieCard = ({ movie }) => {
 
   return (
     <div>
-    <div className="group relative cursor-pointer">
+    <div className="group relative cursor-pointer overflow-hidden rounded-lg">
        <button onClick={()=>setIsModalOpen(true)} className="cursor-pointer">
 
-      <div className="aspect-2/3 w-full overflow-hidden rounded-lg bg-cardBg shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:shadow-xl">
+      <div className="aspect-2/3 w-full rounded-lg bg-cardBg shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:shadow-xl overflow-hidden">
         {/* Poster Image */}
        
         <img
@@ -52,7 +52,7 @@ const MovieCard = ({ movie }) => {
             {movie.title}
           </h3>
           <div className="flex items-center gap-1 mt-1">
-            <span className="text-ratingGold text-xs">★</span>
+            <span className="text-ratingGold text-xs text-amber-300">★</span>
             <span className="text-xs text-textSecondary font-medium">
               {movie.rating}
             </span>
